@@ -1,0 +1,22 @@
+{
+  "name": "Tic-Tac-Toe",
+  "homepage": "https://github.com/gryp17/Tic-Tac-Toe",
+  "description": "Tic-Tac-Toe nodejs game",
+  "main": "app.js",
+  "authors": [
+    "Plamen Ivanov"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "bootstrap-sass": "3.3.6"
+  }
+}
