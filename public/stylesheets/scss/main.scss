@@ -1,9 +1,10 @@
 @import "_bootstrap";
-@import "_variables";
+@import "utils/_variables";
+@import "utils/_common";
 
 body{
 	background: url("/img/pattern.png");
-	
+		
 	&.index{
 		@import "pages/_index";
 	}

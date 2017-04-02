@@ -41,7 +41,8 @@ gulp.task("build", function () {
 //styles task
 gulp.task("styles-min", function () {
 	return gulp.src([
-		cssAppSource
+		cssAppSource,
+		"./bower_components/toastr/toastr.scss"
 	]).pipe(sass({
 		precision: 4,
 		outputStyle: "compressed",
@@ -70,7 +71,8 @@ gulp.task("move-bootstrap-icons", function () {
 gulp.task("js-libs", function () {
 	return gulp.src([
 		"./bower_components/jquery/dist/jquery.min.js",
-		"./bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js"
+		"./bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js",
+		"./bower_components/toastr/toastr.min.js"
 	])
 			.pipe(concat("lib.js"))
 			.pipe(uglify({

@@ -5,3 +5,25 @@
 	text-align: center;
 	color: $blue;
 }
+
+.login-panel{
+	margin: auto;
+	margin-top: 50px;
+	width: 300px;
+	padding: 15px;
+	background-color: #ffffff;
+
+	.tab-pane{
+		margin-top: 10px;
+
+		label{
+			color: $blue;
+		}
+
+	}
+
+	button{
+		display: block;
+		margin: auto;
+	}
+}
