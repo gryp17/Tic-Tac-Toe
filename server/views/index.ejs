@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><%= title %></title>
+		<title>Tic Tac Toe</title>
 		<link rel="stylesheet" href="/stylesheets/css/style.min.css" />
 		<script type="text/javascript" src="/scripts/lib/lib.js"></script>
 		<script type="text/javascript" src="/scripts/pages-min/common.js"></script>
@@ -30,15 +30,15 @@
 					<form id="login-form">
 						<div class="form-group">
 							<label class="label">Username</label>
-							<input type="text" class="form-control" placeholder="Username"/>
+							<input type="text" class="form-control" name="username" placeholder="Username"/>
 						</div>
 
 						<div class="form-group">
 							<label class="label">Password</label>
-							<input type="password" class="form-control" placeholder="Password"/>
+							<input type="password" class="form-control" name="password" placeholder="Password"/>
 						</div>
-
-						<button class="btn btn-success">
+						
+						<button type="button" class="btn btn-success">
 							Login
 						</button>
 					</form>

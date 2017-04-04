@@ -1,1 +1,1 @@
-$(document).ready(function(){console.log("index test")});
+$(document).ready(function(){$("#login-form button").click(function(){console.log("click"),$.ajax({url:"/login",type:"POST",data:$("#login-form").serialize()}).done(function(o){console.log(o),"invalid credentials"!==o&&(window.location.href="/lobby")})})});

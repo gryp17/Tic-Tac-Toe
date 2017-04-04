@@ -3,26 +3,11 @@
 /**
  * Module dependencies.
  */
-var app = require("../app");
+var app = require("../server/app");
 var debug = require("debug")("tic-tac-toe:server");
 var http = require("http");
-var fs = require("fs");
-var environment = process.env.NODE_ENV || "development";
 
-/**
- * Get config from environment
- */
-var config = require("../config/"+environment);
-
-/**
- * Store the config
- */
-app.set("config", config);
-
-/**
- * Store the port in Express.
- */
-app.set("port", config.port);
+var config = app.get("config");
 
 /**
  * Create HTTP server.
