@@ -7,7 +7,8 @@ var middleware = require("../middleware");
 router.get("/", middleware.isLoggedIn, function (req, res, next) {
 	var scriptName = path.basename(__filename);
 	res.render("lobby", {
-		script: scriptName
+		script: scriptName,
+		user: req.session.user
 	});
 });
 
