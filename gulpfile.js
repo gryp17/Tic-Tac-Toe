@@ -72,12 +72,10 @@ gulp.task("js-libs", function () {
 	return gulp.src([
 		"./bower_components/jquery/dist/jquery.min.js",
 		"./bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js",
-		"./bower_components/toastr/toastr.min.js"
+		"./bower_components/toastr/toastr.min.js",
+        "./bower_components/socket.io-client/dist/socket.io.min.js"
 	])
 			.pipe(concat("lib.js"))
-			.pipe(uglify({
-				mangle: true
-			}))
 			.pipe(gulp.dest(jsLibsDestination));
 });
 

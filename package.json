@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "nodemon bin/www"
+    "start": "nodemon server/app.js"
   },
   "devDependencies": {
     "del": "^2.2.0",
@@ -28,6 +28,7 @@
     "morgan": "~1.8.1",
     "mysql": "^2.13.0",
     "nodemon": "^1.11.0",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "~2.4.2",
+    "socket.io": "^1.7.3"
   }
 }

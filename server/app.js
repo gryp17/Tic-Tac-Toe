@@ -1,3 +1,4 @@
+var http = require("http");
 var express = require("express");
 var session = require("express-session");
 var path = require("path");
@@ -16,6 +17,12 @@ var config = require("./config/"+environment);
 
 //store the config
 app.set("config", config);
+
+var server = app.listen(config.port, function (){
+    console.log("listening on port "+config.port);
+});
+
+var io = require("socket.io")(server);
 
 app.use(session({
 	secret: config.secret,
@@ -42,6 +49,24 @@ var lobby = require("./routes/lobby");
 app.use("/", index);
 app.use("/lobby", lobby);
 
+io.on("connection", function (socket) {
+    console.log("a user connected");
+    
+    //disconnect event handler
+    socket.on("disconnect", function () {
+        console.log("user disconnected");
+    });
+
+    //message event handler
+    socket.on("new_message", function (message) {
+        console.log("message: " + message);
+                
+        //send the message to everyone (including the sender)
+        io.emit("new_message", message);
+    });
+});
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
 	var err = new Error("Not Found");
@@ -60,4 +85,3 @@ app.use(function(err, req, res, next) {
 	res.render("error");
 });
 
-module.exports = app;
