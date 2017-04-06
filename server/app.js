@@ -7,7 +7,8 @@ var logger = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
-var app = express();
+var app = module.exports = express();
+var middleware = require("./middleware");
 
 //get the environment 
 var environment = process.env.NODE_ENV || "development";
@@ -50,35 +51,8 @@ var lobby = require("./routes/lobby");
 app.use("/", index);
 app.use("/lobby", lobby);
 
-//socket.io middleware that checks if the request is authorized
-io.use(function (socket, next) {
-
-	//parse all cookies
-	var cookies = {};
-	var pairs = socket.handshake.headers.cookie.split(";");
-	pairs.forEach(function (pair) {
-		pair = pair.split("=");
-		cookies[pair[0].trim()] = unescape(pair[1].trim());
-	});
-
-	var sessionToken = cookies[config.sessionId];
-
-	//check if the session token is valid
-	if (sessionToken) {
-		var unsignedToken = cookieParser.signedCookie(sessionToken, config.secret);
-
-		//if the signed and unsigned tokens match then the token is not valid
-		if (sessionToken === unsignedToken) {
-			next("Invalid session token");
-		} else {
-			next();
-		}
-
-	} else {
-		next("Invalid session token");
-	}
-
-});
+//checks if the socket.io requests are authorized
+io.use(middleware.socketIsAuthorized);
 
 io.on("connection", function (socket) {
 	console.log("@@@ a user connected");
@@ -115,5 +89,3 @@ app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 	res.render("error");
 });
-
-module.exports = app;

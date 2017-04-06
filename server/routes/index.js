@@ -15,7 +15,7 @@ router.get("/", function (req, res, next) {
 
 //ajax login
 router.post("/login", function (req, res, next) {
-	var userModel = new UserModel(req.app.get("config"));
+	var userModel = new UserModel();
 
 	userModel.findByUsername(req.body.username, function (err, result) {
 		if (err) {
@@ -47,7 +47,7 @@ router.get("/logout", function (req, res, next){
 
 //signup
 router.post("/signup", function (req, res, next){
-	var userModel = new UserModel(req.app.get("config"));
+	var userModel = new UserModel();
 	
 	if(!req.body.username || req.body.username.trim() === ""){
 		res.send("Username is required");

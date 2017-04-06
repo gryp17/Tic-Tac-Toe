@@ -1,8 +1,9 @@
 var mysql = require("mysql");
 var md5 = require("md5");
+var app = require("../app");
 
-module.exports = function (config) {	
-	var connection = mysql.createConnection(config.db);
+module.exports = function () {	
+	var connection = mysql.createConnection(app.get("config").db);
 	
 	/**
 	 * Returns the user that matches the provided username
