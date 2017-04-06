@@ -8,12 +8,13 @@
 		<script type="text/javascript" src="/scripts/pages-min/<%= script %>"></script>
 	</head>
 	<body class="lobby">
-
-		lobby page
 		
 		<h4>Logged in as <%= user.username %></h4>
 		
 		<a href="/logout">Logout</a>
+		
+		<hr>
+		Connected users: <ul id="users-count"></ul>
 
 	</body>
 </html>

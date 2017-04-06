@@ -1,1 +1,1 @@
-$(document).ready(function(){var e=io();e.emit("new_message","I am in the lobby"),e.on("new_message",function(e){console.log("received message: "+e)})});
+$(document).ready(function(){var e=io();e.emit("new_message","I am in the lobby"),e.on("new_message",function(e){console.log("received message: "+e)}),e.on("updateUsersList",function(e){console.log("received users: "),console.log(e),$("#users-count").html(""),e.forEach(function(e){$("#users-count").append("<li>"+e.username+"</li>")})})});

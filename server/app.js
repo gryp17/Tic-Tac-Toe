@@ -8,7 +8,6 @@ var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 
 var app = module.exports = express();
-var middleware = require("./middleware");
 
 //get the environment 
 var environment = process.env.NODE_ENV || "development";
@@ -23,9 +22,15 @@ var server = app.listen(config.port, function () {
 	console.log("listening on port " + config.port);
 });
 
-var io = require("socket.io")(server);
+//setup the socket.io listeners
+var io = require("./sockets")(server);
+
+//create a memory store and save it in the app so that can be accessed from the other modules
+var sessionStore = new session.MemoryStore();
+app.set("sessionStore", sessionStore);
 
 app.use(session({
+	store: sessionStore,
 	secret: config.secret,
 	key: config.sessionId,
 	resave: true,
@@ -50,27 +55,6 @@ var lobby = require("./routes/lobby");
 
 app.use("/", index);
 app.use("/lobby", lobby);
-
-//checks if the socket.io requests are authorized
-io.use(middleware.socketIsAuthorized);
-
-io.on("connection", function (socket) {
-	console.log("@@@ a user connected");
-
-	//disconnect event handler
-	socket.on("disconnect", function () {
-		console.log("@@@ user disconnected");
-	});
-
-	//message event handler
-	socket.on("new_message", function (message) {
-		console.log("@@@ message: " + message);
-
-		//send the message to everyone (including the sender)
-		io.emit("new_message", message);
-	});
-});
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

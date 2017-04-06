@@ -17,7 +17,8 @@ module.exports = {
 		}
 	},
 	/**
-	 * Checks if the socket session token is valid
+	 * Checks if the socket session token is valid.
+	 * It also sets the session data in the socket instance.
 	 * @param {Object} socket
 	 * @param {Function} next
 	 */
@@ -37,7 +38,14 @@ module.exports = {
 			if (sessionToken === unsignedToken) {
 				next("Invalid session token");
 			} else {
-				next();
+				
+				//find the session data that matches this token and attach it to the socket
+				var sessionStore = app.get("sessionStore");
+				sessionStore.get(unsignedToken, function (err, session) {
+					socket.session = session;
+					next();
+				});
+				
 			}
 
 		} else {
