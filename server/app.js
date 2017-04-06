@@ -13,19 +13,20 @@ var app = express();
 var environment = process.env.NODE_ENV || "development";
 
 //get config from the environment 
-var config = require("./config/"+environment);
+var config = require("./config/" + environment);
 
 //store the config
 app.set("config", config);
 
-var server = app.listen(config.port, function (){
-    console.log("listening on port "+config.port);
+var server = app.listen(config.port, function () {
+	console.log("listening on port " + config.port);
 });
 
 var io = require("socket.io")(server);
 
 app.use(session({
 	secret: config.secret,
+	key: config.sessionId,
 	resave: true,
 	saveUninitialized: true
 }));
@@ -49,33 +50,63 @@ var lobby = require("./routes/lobby");
 app.use("/", index);
 app.use("/lobby", lobby);
 
-io.on("connection", function (socket) {
-    console.log("a user connected");
-    
-    //disconnect event handler
-    socket.on("disconnect", function () {
-        console.log("user disconnected");
-    });
+//socket.io middleware that checks if the request is authorized
+io.use(function (socket, next) {
 
-    //message event handler
-    socket.on("new_message", function (message) {
-        console.log("message: " + message);
-                
-        //send the message to everyone (including the sender)
-        io.emit("new_message", message);
-    });
+	//parse all cookies
+	var cookies = {};
+	var pairs = socket.handshake.headers.cookie.split(";");
+	pairs.forEach(function (pair) {
+		pair = pair.split("=");
+		cookies[pair[0].trim()] = unescape(pair[1].trim());
+	});
+
+	var sessionToken = cookies[config.sessionId];
+
+	//check if the session token is valid
+	if (sessionToken) {
+		var unsignedToken = cookieParser.signedCookie(sessionToken, config.secret);
+
+		//if the signed and unsigned tokens match then the token is not valid
+		if (sessionToken === unsignedToken) {
+			next("Invalid session token");
+		} else {
+			next();
+		}
+
+	} else {
+		next("Invalid session token");
+	}
+
+});
+
+io.on("connection", function (socket) {
+	console.log("@@@ a user connected");
+
+	//disconnect event handler
+	socket.on("disconnect", function () {
+		console.log("@@@ user disconnected");
+	});
+
+	//message event handler
+	socket.on("new_message", function (message) {
+		console.log("@@@ message: " + message);
+
+		//send the message to everyone (including the sender)
+		io.emit("new_message", message);
+	});
 });
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
 	var err = new Error("Not Found");
 	err.status = 404;
 	next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
 	// set locals, only providing error in development
 	res.locals.message = err.message;
 	res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -85,3 +116,4 @@ app.use(function(err, req, res, next) {
 	res.render("error");
 });
 
+module.exports = app;
