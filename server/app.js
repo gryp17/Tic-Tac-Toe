@@ -1,6 +1,7 @@
 var http = require("http");
 var express = require("express");
 var session = require("express-session");
+var MySQLStore = require("express-mysql-session")(session);
 var path = require("path");
 var favicon = require("serve-favicon");
 var logger = require("morgan");
@@ -25,14 +26,23 @@ var server = app.listen(config.port, function () {
 //setup the socket.io listeners
 var io = require("./sockets")(server);
 
-//create a memory store and save it in the app so that can be accessed from the other modules
-var sessionStore = new session.MemoryStore();
+//create a session mysql store and save it in the app so that can be accessed from the other modules
+var sessionStore = new MySQLStore({
+	host: config.db.host,
+	database: config.db.database,
+	user: config.db.user,
+	password: config.db.password,
+	schema: {
+		tableName: config.session.tableName
+	}
+});
+
 app.set("sessionStore", sessionStore);
 
 app.use(session({
 	store: sessionStore,
-	secret: config.secret,
-	key: config.sessionId,
+	secret: config.session.secret,
+	key: config.session.sessionId,
 	resave: true,
 	saveUninitialized: true
 }));

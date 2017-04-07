@@ -28,11 +28,11 @@ module.exports = {
 		//parse all cookies
 		var cookies = cookie.parse(socket.handshake.headers.cookie);
 
-		var sessionToken = cookies[config.sessionId];
+		var sessionToken = cookies[config.session.sessionId];
 
 		//check if the session token is valid
 		if (sessionToken) {
-			var unsignedToken = cookieParser.signedCookie(sessionToken, config.secret);
+			var unsignedToken = cookieParser.signedCookie(sessionToken, config.session.secret);
 
 			//if the signed and unsigned tokens match then the token is not valid
 			if (sessionToken === unsignedToken) {
@@ -40,8 +40,12 @@ module.exports = {
 			} else {
 				
 				//find the session data that matches this token and attach it to the socket
-				var sessionStore = app.get("sessionStore");
-				sessionStore.get(unsignedToken, function (err, session) {
+				var sessionStore = app.get("sessionStore");				
+				sessionStore.get(unsignedToken, function (err, session) {	
+					if(err){
+						return next(err);
+					}
+					
 					socket.session = session;
 					next();
 				});
