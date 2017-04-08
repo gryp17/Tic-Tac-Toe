@@ -17,12 +17,29 @@
 				}
 				
 				&.author{
+					font-weight: bold;
 					color: $blue;
 				}
 			}
+			
+			//system message
+			&.system{
+				
+				&.connected{
+					.content{
+						color: $green;
+					}
+				}
+				
+				&.disconnected{
+					.content{
+						color: $red;
+					}
+				}
+			}
+			
 		}
 	}
-	
 }
 
 #users-list{
