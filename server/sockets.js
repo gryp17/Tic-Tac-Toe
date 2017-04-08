@@ -14,24 +14,28 @@ module.exports = function (server) {
 		connectedUsers.push(socket.session.user);
 		io.emit("updateUsersList", connectedUsers);
 
+		//lobby chat message handler
+		socket.on("lobbyMessage", function (message) {
+			//add the date and author attributes and emit the message to all clientes
+			var data = {
+				message: message,
+				date: new Date(),
+				author: socket.session.user
+			};
+			io.emit("lobbyMessage", data);
+		});
+
 		//disconnect event handler
-		socket.on("disconnect", function (socket) {
+		socket.on("disconnect", function () {
 			console.log("@@@ user disconnected");
-			
-			connectedUsers = connectedUsers.filter(function (user){
+
+			connectedUsers = connectedUsers.filter(function (user) {
 				return user.id !== socket.session.user.id;
 			});
-			
+
 			io.emit("updateUsersList", connectedUsers);
 		});
 
-		//message event handler
-		socket.on("new_message", function (message) {
-			console.log("@@@ message: " + message);
-
-			//send the message to everyone (including the sender)
-			io.emit("new_message", message);
-		});
 	});
 
 	return io;

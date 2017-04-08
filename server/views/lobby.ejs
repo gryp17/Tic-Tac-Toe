@@ -8,13 +8,42 @@
 		<script type="text/javascript" src="/scripts/pages-min/<%= script %>"></script>
 	</head>
 	<body class="lobby">
-		
-		<h4>Logged in as <%= user.username %></h4>
-		
-		<a href="/logout">Logout</a>
-		
-		<hr>
-		Connected users: <ul id="users-count"></ul>
+
+		<div class="container">
+
+			<!-- header -->
+			<div class="page-header">
+				<h4>Logged in as <%= user.username %> <a href="/logout">Logout</a></h4>
+			</div>
+			
+			<!-- lobby chat -->
+			<div id="chat" class="well">
+				<div class="chat-body">
+				</div>							
+				<div class="text-box">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Message"/>
+						<span class="input-group-btn">
+							<button class="btn btn-primary" type="button">Send</button>
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-xs-4">
+					Connected users: 
+					<div id="users-list">
+					</div>
+				</div>
+				<div class="col-xs-offset-4 col-xs-4">
+					games list:
+				</div>
+			</div>
+
+		</div>
+
+
 
 	</body>
 </html>

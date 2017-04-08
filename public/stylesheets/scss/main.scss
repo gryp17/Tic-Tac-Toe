@@ -8,4 +8,8 @@ body{
 	&.index{
 		@import "pages/_index";
 	}
+	
+	&.lobby{
+		@import "pages/_lobby";
+	}
 }
