@@ -19,16 +19,14 @@ var AutoPrefixerOptions = {
 var cssAppSource = "./public/stylesheets/scss/**/*.scss";
 var cssDestination = "./public/stylesheets/css";
 var jsAppSource = "./public/scripts/pages/*.js";
-var jsDestination = "./public/scripts/pages-min/";
-var jsLibsDestination = "./public/scripts/lib/";
+var jsDestination = "./public/scripts/";
+var jsLibsDestination = "./public/scripts/";
 
 //build task
 gulp.task("build", function () {
 	del([
 		"./public/stylesheets/css/style.min.css",
-		"./public/stylesheets/css/style.css.map",
-		jsLibsDestination,
-		jsDestination
+		"./public/stylesheets/css/style.css.map"
 	]);
 
 	gulp.start("styles-min");
@@ -84,7 +82,7 @@ gulp.task("js-libs", function () {
 gulp.task("scripts", function () {
 	return gulp.src([
 		jsAppSource
-	])
+	]).pipe(concat("app.js"))
 			.pipe(uglify({
 				mangle: true
 			}))

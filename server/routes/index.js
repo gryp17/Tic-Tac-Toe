@@ -1,5 +1,4 @@
 var express = require("express");
-var path = require("path");
 var router = express.Router();
 var md5 = require("md5");
 
@@ -7,10 +6,7 @@ var UserModel = require("../models/user");
 
 //home page
 router.get("/", function (req, res, next) {
-	var scriptName = path.basename(__filename);
-	res.render("index", {
-		script: scriptName
-	});
+	res.render("index");
 });
 
 //ajax login

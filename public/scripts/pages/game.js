@@ -1,5 +1,3 @@
-$(document).ready(function () {
-
-    var socket = io("/game");
-
-});
+function game(){
+	var socket = io("/game");
+}

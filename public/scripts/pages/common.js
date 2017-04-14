@@ -1,3 +1,7 @@
-toastr.options = {
-	positionClass: "toast-top-center"
-};
+function common(){
+	
+	toastr.options = {
+		positionClass: "toast-top-center"
+	};
+	
+}
