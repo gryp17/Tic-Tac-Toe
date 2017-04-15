@@ -44,7 +44,7 @@
 				</div>
 				<div class="tab-pane" id="signup">
 
-					<form id="signup-form">
+					<form id="signup-form" enctype="multipart/form-data">
 						<div class="form-group">
 							<label class="label">Username</label>
 							<input type="text" class="form-control" name="username" placeholder="Username"/>
@@ -58,6 +58,11 @@
 						<div class="form-group">
 							<label class="label">Repeat Password</label>
 							<input type="password" class="form-control" name="repeatPassword" placeholder="Repeat Password"/>
+						</div>
+						
+						<div class="form-group">
+							<label class="label">Avatar (optional)</label>
+							<input type="file" name="avatar" />
 						</div>
 
 						<button type="button" class="btn btn-success">

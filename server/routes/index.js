@@ -1,15 +1,22 @@
 var express = require("express");
 var router = express.Router();
 var md5 = require("md5");
+var multipart = require("connect-multiparty");
+
+var middleware = require("../middleware");
 
 var UserModel = require("../models/user");
 
-//home page
+/**
+ * Home page
+ */
 router.get("/", function (req, res, next) {
 	res.render("index");
 });
 
-//ajax login
+/**
+ * Ajax login
+ */
 router.post("/login", function (req, res, next) {
 	var userModel = new UserModel();
 
@@ -19,71 +26,53 @@ router.post("/login", function (req, res, next) {
 		}
 
 		if (result) {
-			
-			if(result.password !== md5(req.body.password)){
+
+			if (result.password !== md5(req.body.password)) {
 				res.send("Wrong username or password");
-			}else{
+			} else {
 				delete result.password;
 				req.session.user = result;
 				res.send({user: result});
 			}
-			
+
 		} else {
 			res.send("Wrong username or password");
 		}
 	});
 });
 
-//logout
-router.get("/logout", function (req, res, next){
-	req.session.destroy(function (){
+/**
+ * Logout
+ */
+router.get("/logout", function (req, res, next) {
+	req.session.destroy(function () {
 		res.redirect("/");
 	});
 });
 
-//signup
-router.post("/signup", function (req, res, next){
+/**
+ * Ajax signup
+ * calls the multipart middleware in order to parse the multipart form data
+ * calls the checkSignupData in order to validate the username/password
+ * finally calls the uploadAvatar middleware that uploads the avatar and saves the avatar filename in the req.files.avatar.uploadedTo field
+ */
+router.post("/signup", multipart(), middleware.checkSignupData, middleware.uploadAvatar, function (req, res, next) {
 	var userModel = new UserModel();
-	
-	if(!req.body.username || req.body.username.trim() === ""){
-		res.send("Username is required");
-	}
-	
-	if(req.body.username.length > 20){
-		res.send("The username is too long");
-	}
-	
-	if(!req.body.password || req.body.password.trim() === ""){
-		res.send("Password is required");
-	}
-	
-	if(req.body.password !== req.body.repeatPassword){
-		res.send("The passwords don't match");
-	}
-	
-	//check if the username is in use
-	userModel.findByUsername(req.body.username.trim(), function (err, result) {
+
+	var data = req.body;
+
+	//create the new user
+	userModel.create(data.username.trim(), data.password.trim(), req.files.avatar.uploadedTo, function (err, userInstance) {
 		if (err) {
 			return next(err);
 		}
-		
-		if(result){
-			res.send("The username is taken");
-		}else{
-			//create the new user
-			userModel.create(req.body.username.trim(), req.body.password.trim(), function (err, userInstance){
-				if (err) {
-					return next(err);
-				}
 
-				//log in the newly created user
-				delete userInstance.password;
-				req.session.user = userInstance;
-				res.send({user: userInstance});
-			});
-		}
-	});	
-	
+		//log in the newly created user
+		delete userInstance.password;
+		req.session.user = userInstance;
+		res.send({user: userInstance});
+	});
+
 });
 
 module.exports = router;

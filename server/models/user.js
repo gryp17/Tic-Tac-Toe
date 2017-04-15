@@ -32,10 +32,10 @@ module.exports = function () {
 	 * @param {String} password
 	 * @param {Function} done
 	 */
-	this.create = function (username, password, done) {
+	this.create = function (username, password, avatar, done) {
 		var self = this;
 		
-		connection.query("INSERT INTO user (username, password, created) VALUES (?, ?, now())", [username, md5(password)], function (err, result) {
+		connection.query("INSERT INTO user (username, password, avatar, created) VALUES (?, ?, ?, now())", [username, md5(password), avatar], function (err, result) {
 			if (err) {
 				return done(err);
 			}

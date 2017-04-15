@@ -10,5 +10,10 @@ module.exports = {
 		database: "tic-tac-toe",
 		user: "root",
 		password: "1234"
+	},
+	uploads: {
+		avatarsDirectory: "./public/upload/avatars/",
+		maxAvatarSize: 1000000,
+		validAvatarExtensions: ["png", "jpg", "jpeg"]
 	}
 };
