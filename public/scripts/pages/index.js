@@ -19,7 +19,7 @@ function index(){
 	
 	
 	//sign up and log in the user
-	$("#signup-form button").click(function () {
+	$("#signup-form .signup-btn").click(function () {
 		
 		var formData = new FormData(document.getElementById("signup-form"));
 		
@@ -39,4 +39,15 @@ function index(){
 		});
 		
 	});
+	
+	//redirect the click to the actual file input
+	$(".browse-btn, .avatar-preview").click(function (){
+		$(".avatar").click();
+	});
+	
+	//on avatar file change generate the preview
+	$(".avatar").change(function (e) {
+		$(".avatar-preview").attr("src", URL.createObjectURL(e.target.files[0]));
+	});
+	
 }

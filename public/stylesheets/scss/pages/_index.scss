@@ -20,6 +20,34 @@
 			color: $blue;
 		}
 
+		.avatar-wrapper{
+			position: relative;
+			
+			.browse-btn{
+				display: block;
+				margin-left: 0px;
+			}
+
+			.avatar-preview{
+				position: absolute;
+				right: 33px;
+				top: -17px;
+				width: 70px;
+				height: 70px;
+				border-radius: 100%;
+				cursor: pointer;
+			}
+
+			.avatar{
+				display: none;
+			}
+			
+		}
+		
+		.signup-btn{
+			margin-top: 25px;
+		}
+
 	}
 
 	button{
