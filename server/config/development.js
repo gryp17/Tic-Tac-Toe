@@ -14,6 +14,7 @@ module.exports = {
 	uploads: {
 		avatarsDirectory: "./public/upload/avatars/",
 		maxAvatarSize: 1000000,
-		validAvatarExtensions: ["png", "jpg", "jpeg"]
+		validAvatarExtensions: ["png", "jpg", "jpeg"],
+		defaultAvatar: "default.png"
 	}
 };

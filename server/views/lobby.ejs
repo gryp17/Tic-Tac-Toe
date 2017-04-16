@@ -11,9 +11,25 @@
 
 			<!-- header -->
 			<div class="page-header">
-				<h4>Logged in as <%= user.username %> <a href="/logout">Logout</a></h4>
+				<img class="avatar-preview" src="/upload/avatars/<%= user.avatar %>"/>
+				
+				Logged in as
+				
+				<a class="profile-link" href="/user/<%= user.id %>">
+					<%= user.username %>
+				</a>
+				
+				<form id="update-avatar-form" enctype="multipart/form-data">
+					<input class="avatar" name="avatar" type="file"/>
+				</form>
+				
+				
+				<a class="btn btn-danger logout-btn" href="/logout">
+					<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+					Logout
+				</a>
 			</div>
-			
+
 			<!-- lobby chat -->
 			<div id="chat" class="well">
 				<div class="chat-body">

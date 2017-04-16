@@ -1,6 +1,42 @@
 function lobby(){
 	var socket = io("/lobby");
 	
+	//redirect the avatar-preview click to the actual file input
+	$(".avatar-preview").click(function (){
+		$(".avatar").click();
+	});
+	
+	//on avatar change submit the form data
+	$("#update-avatar-form .avatar").change(function () {
+		
+		var formData = new FormData(document.getElementById("update-avatar-form"));
+		
+		$.ajax({
+			url: "/user/updateAvatar",
+			type: "POST",
+			enctype: "multipart/form-data",
+			processData: false,
+			contentType: false,
+			data: formData
+		}).done(function (result) {
+			//if the avatar has been uploaded successfully
+			if(result.avatar){
+				//update the avatar-preview image with the new image
+				var src = $(".avatar-preview").attr("src");
+				src = src.replace(/[^\/]+?$/, result.avatar);
+				$(".avatar-preview").attr("src", src);
+				
+				//send a socketio event to all clients with the new user avatar
+				socket.emit("updateAvatar", result.avatar);
+				
+			}else{
+				toastr.error(result);
+			}
+			
+		});
+	});
+	
+	
 	/**
 	 * Sends the lobby chat message
 	 */
@@ -96,6 +132,13 @@ function lobby(){
 				class: "alert alert-success",
 				text: user.username
 			});
+			
+			var avatar = $("<img>", {
+				class: "avatar",
+				src: "/upload/avatars/"+user.avatar
+			});
+			
+			item.prepend(avatar);
 			
 			$("#users-list").append(item);
 		});

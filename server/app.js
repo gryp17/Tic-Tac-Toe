@@ -62,10 +62,12 @@ app.use(express.static("./public"));
 //routes
 var index = require("./routes/index");
 var lobby = require("./routes/lobby");
+var user = require("./routes/user");
 var game = require("./routes/game");
 
 app.use("/", index);
 app.use("/lobby", lobby);
+app.use("/user", user);
 app.use("/game", game);
 
 // catch 404 and forward to error handler

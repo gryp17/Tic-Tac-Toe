@@ -21,6 +21,12 @@ module.exports = function () {
 				done(null);
 			} else {
 				var user = rows[0];
+				
+				//if there is no avatar use the default one
+				if(!user.avatar){
+					user.avatar = app.get("config").uploads.defaultAvatar;
+				}
+				
 				done(null, user);
 			}
 		});
@@ -52,5 +58,21 @@ module.exports = function () {
 		});
 	};
 	
+	/**
+	 * Updated any of the user attributes
+	 * @param {Number} id
+	 * @param {Object} data
+	 * @param {Function} done
+	 */
+	this.update = function (id, data, done){
+		
+		//delete the fields that shouldn't be changed
+		delete data.id;
+		delete data.username;
+		
+		connection.query("UPDATE user SET ? WHERE ?", [data, {id: id}], function (err, result){
+			done(err, result);
+		});
+	};
 	
 }; 

@@ -4,6 +4,7 @@ var cookieParser = require("cookie-parser");
 var fs = require("fs");
 var md5 = require("md5");
 var path = require("path");
+var async = require("async");
 
 var UserModel = require("./models/user");
 
@@ -43,18 +44,18 @@ module.exports = {
 			if (sessionToken === unsignedToken) {
 				next("Invalid session token");
 			} else {
-				
+
 				//find the session data that matches this token and attach it to the socket
-				var sessionStore = app.get("sessionStore");				
-				sessionStore.get(unsignedToken, function (err, session) {	
-					if(err){
+				var sessionStore = app.get("sessionStore");
+				sessionStore.get(unsignedToken, function (err, session) {
+					if (err) {
 						return next(err);
 					}
-					
+
 					socket.session = session;
 					next();
 				});
-				
+
 			}
 
 		} else {
@@ -68,7 +69,7 @@ module.exports = {
 	 * @param {Object} res
 	 * @param {Function} next
 	 */
-	checkSignupData: function (req, res, next){
+	checkSignupData: function (req, res, next) {
 		var userModel = new UserModel();
 		var data = req.body;
 
@@ -87,7 +88,7 @@ module.exports = {
 		if (data.password !== data.repeatPassword) {
 			return res.send("The passwords don't match");
 		}
-		
+
 		//check if the username is in use
 		userModel.findByUsername(data.username.trim(), function (err, result) {
 			if (err) {
@@ -100,7 +101,7 @@ module.exports = {
 				next(null);
 			}
 		});
-		
+
 	},
 	/**
 	 * Checks if the submited file is valid and uploads it to the avatars directory
@@ -110,41 +111,75 @@ module.exports = {
 	 * @param {Function} next
 	 */
 	uploadAvatar: function (req, res, next) {
+		var asyncTasks = [];
 		var config = req.app.get("config");
 		var validExtensions = config.uploads.validAvatarExtensions;
-		
+
 		var file = req.files.avatar;
-		var extension = path.extname(file.originalFilename).replace(".", "");
-				
+		var extension = path.extname(file.originalFilename).replace(".", "").toLowerCase();
+
 		//if no file has been submited
-		if(file.originalFilename.length === 0){
+		if (file.originalFilename.length === 0) {
 			return next(null, null);
 		}
-		
+
 		//max file size
-		if(file.size > config.uploads.maxAvatarSize){
+		if (file.size > config.uploads.maxAvatarSize) {
 			return res.send("The avatar is too big");
 		}
-		
+
 		//valid extensions
-		if(validExtensions.indexOf(extension) === -1){
+		if (validExtensions.indexOf(extension) === -1) {
 			return res.send("Invalid avatar extension");
 		}
+
+		//if the user is logged in (trying to update his avatar) and doesn't use the default avatar
+		//add the "unlink" task before the "rename" one
+		if (req.session && req.session.user && req.session.user.avatar !== config.uploads.defaultAvatar) {
+
+			asyncTasks.push(function (done) {
+				var oldAvatar = config.uploads.avatarsDirectory + req.session.user.avatar;
+
+				//remove all GET parameters from the path (if any)
+				oldAvatar = oldAvatar.replace(/\?.+/, "");
+				
+				//delete the old avatar
+				fs.unlink(oldAvatar, function (err) {
+					if (err) {
+						return done("Failed to delete the old avatar");
+					}
+					
+					done(null);
+				});
+			});
+		}
 		
-		var avatar = md5(req.body.username)+"."+extension;
-		var destination = config.uploads.avatarsDirectory+avatar;
-		
-		//move the temporal file to the real avatars directory
-		fs.rename(file.path, destination, function (err){
-			if(err){
-				return res.send(err.code);
-			}
+		//add the "rename/move" task
+		asyncTasks.push(function (done){
+			var avatar = md5(req.body.username) + "." + extension;
+			var destination = config.uploads.avatarsDirectory + avatar;
 			
-			//append the uploaded avatar to the files object
-			req.files.avatar.uploadedTo = avatar;
+			//move the temporal file to the real avatars directory
+			fs.rename(file.path, destination, function (err) {
+				if (err) {
+					return done("Failed to upload the avatar");
+				}
+
+				//append the uploaded avatar to the files object
+				req.files.avatar.uploadedTo = avatar + "?updated=" + new Date().getTime();
+
+				done(null);
+			});
+		});
+
+		//run all tasks
+		async.series(asyncTasks, function (err){
+			if(err){
+				return res.send(err);
+			}
 			
 			next(null);
 		});
-		
+
 	}
 };

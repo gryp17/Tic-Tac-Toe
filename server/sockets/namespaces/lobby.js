@@ -38,6 +38,13 @@ module.exports = function (io) {
 
 			lobby.emit("chatMessage", data);
 		});
+		
+		//update avatar handler
+		socket.on("updateAvatar", function (avatar){
+			//update the user's avatar in the connectedUsers list and send the updated list to all clients
+			connectedUsers[socket.session.user.id].avatar = avatar;
+			lobby.emit("updateUsersList", _.values(connectedUsers));
+		});
 
 		//disconnect event handler
 		socket.on("disconnect", function () {
