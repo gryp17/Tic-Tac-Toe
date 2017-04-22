@@ -31,8 +31,12 @@ router.post("/updateAvatar", middleware.isLoggedIn, multipart(), function (req, 
 
 			//update the user avatar in the connectedUsers list and send an event to all connected users
 			var lobby = req.app.get("socketNamespaces").lobby;
-			lobby.connectedUsers[req.session.user.id].avatar = req.files.avatar.uploadedTo;
-			lobby.emit("updateUsersList", _.values(lobby.connectedUsers));
+			_.forOwn(lobby.connected, function (data, socketId){
+				if(data.session.user.id === req.session.user.id){
+					data.session.user.avatar = req.files.avatar.uploadedTo;
+					lobby.emit("updateUsersList", lobby.getConnectedUsers());
+				}
+			});
 
 			//send the updated avatar to the front end
 			res.send({

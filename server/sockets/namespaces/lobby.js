@@ -5,17 +5,29 @@ module.exports = function (io) {
 	//lobby namespace
 	var lobby = io.of("/lobby");
 	
-	lobby.connectedUsers = {};
 	lobby.games = {};
+	
+	/**
+	 * Helper function that returns an array of all connected users
+	 * @returns {Array}
+	 */
+	lobby.getConnectedUsers = function () {
+		var users = [];
 
+		_.forOwn(this.connected, function (data, socketId) {
+			users.push(data.session.user);
+		});
+
+		return users;
+	};
+	
 	//checks if the socket.io requests are authorized
 	lobby.use(middleware.socketIsAuthorized);
 
 	lobby.on("connection", function (socket) {
-
-		//add the newly connected user to the connectedUsers list and emit the updateUsersList event
-		lobby.connectedUsers[socket.session.user.id] = socket.session.user;
-		lobby.emit("updateUsersList", _.values(lobby.connectedUsers));
+										
+		//update the connected users list
+		lobby.emit("updateUsersList", lobby.getConnectedUsers());
 
 		//create a system message and send it to notify all clients that the user has joined the lobby
 		var data = {
@@ -39,11 +51,28 @@ module.exports = function (io) {
 			lobby.emit("chatMessage", data);
 		});
 		
+		//lobby challenge user handler
+		socket.on("challengeUser", function (challengedUserId){
+			challengedUserId = parseInt(challengedUserId);
+			
+			//can't challenge your self obviously
+			if (challengedUserId !== socket.session.user.id) {
+				//find the correct socketId and send the challenge only to that user
+				_.forOwn(lobby.connected, function (data, socketId) {
+					if (data.session.user.id === challengedUserId) {
+						//send the challenger data to the challenged user
+						socket.broadcast.to(socketId).emit("challenge", socket.session.user);
+					}
+				});
+			}
+
+		});
+		
 		//disconnect event handler
 		socket.on("disconnect", function () {
 
-			delete lobby.connectedUsers[socket.session.user.id];
-			lobby.emit("updateUsersList", _.values(lobby.connectedUsers));
+			//update the connected users list
+			lobby.emit("updateUsersList", lobby.getConnectedUsers());
 
 			//create a system message and send it to notify all clients that the user has left the lobby
 			var data = {
@@ -56,6 +85,6 @@ module.exports = function (io) {
 		});
 
 	});
-
+	
 	return lobby;
 };

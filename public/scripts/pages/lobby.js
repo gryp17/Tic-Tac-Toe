@@ -1,4 +1,6 @@
-function lobby(){	
+function lobby(){
+	var myId = $("#user-id").attr("id");
+	
 	var socket = io("/lobby");
 	
 	//redirect the avatar-preview click to the actual file input
@@ -120,10 +122,7 @@ function lobby(){
 				class: "alert alert-success",
 				text: user.username,
 				title: "Invite "+user.username+" for a game",
-				click: function (){
-					var userId = $(this).attr("id");
-					console.log("clicked "+userId);
-				}
+				click: challengeUser
 			});
 			
 			var avatar = $("<img>", {
@@ -151,4 +150,29 @@ function lobby(){
 		});
 		
 	});
+	
+	/**
+	 * Handler function that is called when a user is clicked
+	 * It sends a challenge to the selected user.
+	 */
+	function challengeUser(){
+		var userId = $(this).attr("id");
+		
+		//can't challenge your self
+		if(userId !== myId){
+			console.log("challenged "+userId);
+			socket.emit("challengeUser", userId);
+		}
+	}
+	
+	//challenge handler
+	socket.on("challenge", function (challenger){
+		
+		console.log("received challenge from");
+		console.log(challenger);
+		
+		alert("you have been challenged by "+challenger.username);
+
+	});
+	
 }
