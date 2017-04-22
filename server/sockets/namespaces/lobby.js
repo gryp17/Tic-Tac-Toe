@@ -4,9 +4,9 @@ var middleware = require("../../middleware");
 module.exports = function (io) {
 	//lobby namespace
 	var lobby = io.of("/lobby");
-
-	var connectedUsers = {};
-	var games = {};
+	
+	lobby.connectedUsers = {};
+	lobby.games = {};
 
 	//checks if the socket.io requests are authorized
 	lobby.use(middleware.socketIsAuthorized);
@@ -14,8 +14,8 @@ module.exports = function (io) {
 	lobby.on("connection", function (socket) {
 
 		//add the newly connected user to the connectedUsers list and emit the updateUsersList event
-		connectedUsers[socket.session.user.id] = socket.session.user;
-		lobby.emit("updateUsersList", _.values(connectedUsers));
+		lobby.connectedUsers[socket.session.user.id] = socket.session.user;
+		lobby.emit("updateUsersList", _.values(lobby.connectedUsers));
 
 		//create a system message and send it to notify all clients that the user has joined the lobby
 		var data = {
@@ -39,18 +39,11 @@ module.exports = function (io) {
 			lobby.emit("chatMessage", data);
 		});
 		
-		//update avatar handler
-		socket.on("updateAvatar", function (avatar){
-			//update the user's avatar in the connectedUsers list and send the updated list to all clients
-			connectedUsers[socket.session.user.id].avatar = avatar;
-			lobby.emit("updateUsersList", _.values(connectedUsers));
-		});
-
 		//disconnect event handler
 		socket.on("disconnect", function () {
 
-			delete connectedUsers[socket.session.user.id];
-			lobby.emit("updateUsersList", _.values(connectedUsers));
+			delete lobby.connectedUsers[socket.session.user.id];
+			lobby.emit("updateUsersList", _.values(lobby.connectedUsers));
 
 			//create a system message and send it to notify all clients that the user has left the lobby
 			var data = {
@@ -64,4 +57,5 @@ module.exports = function (io) {
 
 	});
 
+	return lobby;
 };

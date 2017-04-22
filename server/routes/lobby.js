@@ -5,7 +5,7 @@ var middleware = require("../middleware");
 /**
  * Lobby home
  */
-router.get("/", middleware.isLoggedIn, function (req, res, next) {
+router.get("/", middleware.isLoggedIn, function (req, res, next) {	
 	res.render("lobby", {
 		user: req.session.user
 	});

@@ -1,4 +1,4 @@
-function lobby(){
+function lobby(){	
 	var socket = io("/lobby");
 	
 	//redirect the avatar-preview click to the actual file input
@@ -25,10 +25,6 @@ function lobby(){
 				var src = $(".avatar-preview").attr("src");
 				src = src.replace(/[^\/]+?$/, result.avatar);
 				$(".avatar-preview").attr("src", src);
-				
-				//send a socketio event to all clients with the new user avatar
-				socket.emit("updateAvatar", result.avatar);
-				
 			}else{
 				toastr.error(result);
 			}

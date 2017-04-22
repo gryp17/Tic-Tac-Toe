@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+var _ = require("lodash");
 var multipart = require("connect-multiparty");
 
 var UserModel = require("../models/user");
@@ -27,6 +28,11 @@ router.post("/updateAvatar", middleware.isLoggedIn, multipart(), function (req, 
 
 			//update the session variable				
 			req.session.user.avatar = req.files.avatar.uploadedTo;
+
+			//update the user avatar in the connectedUsers list and send an event to all connected users
+			var lobby = req.app.get("socketNamespaces").lobby;
+			lobby.connectedUsers[req.session.user.id].avatar = req.files.avatar.uploadedTo;
+			lobby.emit("updateUsersList", _.values(lobby.connectedUsers));
 
 			//send the updated avatar to the front end
 			res.send({

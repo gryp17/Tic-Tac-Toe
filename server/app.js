@@ -24,7 +24,11 @@ var server = app.listen(config.port, function () {
 });
 
 //setup the socket.io listeners
-var io = require("./sockets")(server);
+var io = require("socket.io")(server);
+var socketNamespaces = require("./sockets")(io);
+
+//save the socket namespaces
+app.set("socketNamespaces", socketNamespaces);
 
 //create a session mysql store and save it in the app so that can be accessed from the other modules
 var sessionStore = new MySQLStore({
