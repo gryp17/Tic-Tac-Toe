@@ -71,6 +71,8 @@
 	.alert{
 		margin-bottom: 5px;
 		padding: 5px;
+		font-size: 17px;
+		font-weight: bold;
 		cursor: pointer;
 		
 		.avatar{
@@ -78,6 +80,19 @@
 			height: 50px;
 			margin-right: 5px;
 			border-radius: 100%;
+		}
+		
+		.user-info{
+			float: right;
+			display: block;
+			padding: 14px;
+			text-align: center;
+			
+			.glyphicon{
+				top: 0px;
+				vertical-align: middle;
+				font-size: 20px;
+			}
 		}
 	}
 	

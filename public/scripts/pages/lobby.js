@@ -63,12 +63,6 @@ function lobby(){
 		}
 	});
 	
-	//users click handler
-	$("#users-list").on("click", "> *", function (){
-		var userId = $(this).attr("id");
-		console.log("clicked "+userId);
-	});
-	
 	//chat message handler
 	//it builds the necessary DOM elements and adds them to the chat container
 	socket.on("chatMessage", function (data){
@@ -120,8 +114,6 @@ function lobby(){
 	
 	//update the users list
 	socket.on("updateUsersList", function (users){
-		console.log("received users: ");
-		console.log(users);
 				
 		//empty the users list and generate it again with the new users data
 		$("#users-list").empty();
@@ -130,7 +122,12 @@ function lobby(){
 			var item = $("<div>", {
 				id: user.id,
 				class: "alert alert-success",
-				text: user.username
+				text: user.username,
+				title: "Invite "+user.username+" for a game",
+				click: function (){
+					var userId = $(this).attr("id");
+					console.log("clicked "+userId);
+				}
 			});
 			
 			var avatar = $("<img>", {
@@ -139,6 +136,20 @@ function lobby(){
 			});
 			
 			item.prepend(avatar);
+			
+			var profileIcon = $("<span>", {
+				class: "glyphicon glyphicon-info-sign"
+			});
+			
+			var profileButton = $("<a>", {
+				class: "user-info",
+				href: "/user/"+user.id,
+				target: "_blank",
+				title: "View user info"
+			});
+			
+			profileButton.append(profileIcon);
+			item.append(profileButton);
 			
 			$("#users-list").append(item);
 		});
