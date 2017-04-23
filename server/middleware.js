@@ -51,7 +51,7 @@ module.exports = {
 					if (err) {
 						return next(err);
 					}
-
+					
 					socket.session = session;
 					next();
 				});

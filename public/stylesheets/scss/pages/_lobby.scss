@@ -1,22 +1,22 @@
 
 .page-header{
 	font-size: 23px;
-	
+
 	.avatar-preview{
 		width: 70px;
 		height: 70px;
 		border-radius: 100%;
 		cursor: pointer;
 	}
-	
+
 	#update-avatar-form{
 		display: none;
 	}
-	
+
 	.profile-link{
 		font-weight: bold;
 	}
-	
+
 	.logout-btn{
 		float: right;
 		margin-top: 20px;
@@ -26,42 +26,42 @@
 #chat{
 	position: relative;
 	padding: 0px;
-	
+
 	.chat-body{
 		height: 150px;
 		overflow-y: auto;
 		padding: 12px;
-		
+
 		.message{
 			span{
 				margin-right: 5px;
-				
+
 				&.timestamp{
 					color: #c5c5c5;
 				}
-				
+
 				&.author{
 					font-weight: bold;
 					color: $blue;
 				}
 			}
-			
+
 			//system message
 			&.system{
-				
+
 				&.connected{
 					.content{
 						color: $green;
 					}
 				}
-				
+
 				&.disconnected{
 					.content{
 						color: $red;
 					}
 				}
 			}
-			
+
 		}
 	}
 }
@@ -74,20 +74,20 @@
 		font-size: 17px;
 		font-weight: bold;
 		cursor: pointer;
-		
+
 		.avatar{
 			width: 50px;
 			height: 50px;
 			margin-right: 5px;
 			border-radius: 100%;
 		}
-		
+
 		.user-info{
 			float: right;
 			display: block;
 			padding: 14px;
 			text-align: center;
-			
+
 			.glyphicon{
 				top: 0px;
 				vertical-align: middle;
@@ -95,5 +95,27 @@
 			}
 		}
 	}
-	
+
+}
+
+#challenge-modal, #challenge-pending-modal{
+
+	.modal-dialog{
+		margin-top: 290px;
+		
+		@media (min-width: 768px){
+			width: 400px;
+		}
+
+		.modal-body{
+			text-align: center;
+		}
+
+		.modal-footer{
+			text-align: center;
+			padding-top: 0px;
+			border: none;
+		}
+	}
+
 }
