@@ -2,3 +2,6 @@
 /node_modules/
 /bower_components/
 /public/upload/avatars/
+/public/stylesheets/css/
+/public/scripts/app.js
+/public/scripts/lib.js
