@@ -13,8 +13,28 @@
 	padding: 15px;
 	background-color: #ffffff;
 
-	.tab-pane{
+	.tab-button{
+		border-bottom: 6px solid #cccccc;
+		padding: 2px 4px;
+		cursor: pointer;
+		display: inline-block;
+
+		&:hover{
+			background-color: #f1f1f1;
+		}
+
+		&.active{
+			border-color: $blue;
+		}
+	}
+
+	.tab-content{
+		display: none;
 		margin-top: 10px;
+
+		&.active{
+			display: block;
+		}
 
 		label{
 			color: $blue;
@@ -22,7 +42,7 @@
 
 		.avatar-wrapper{
 			position: relative;
-			
+
 			.browse-btn{
 				display: block;
 				margin-left: 0px;
@@ -41,17 +61,16 @@
 			.avatar{
 				display: none;
 			}
-			
+
 		}
-		
+
 		.signup-btn{
 			margin-top: 25px;
 		}
-
 	}
 
 	button{
 		display: block;
 		margin: auto;
-	}
+	}	
 }
