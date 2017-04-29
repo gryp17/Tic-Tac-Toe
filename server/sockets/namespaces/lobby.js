@@ -39,38 +39,38 @@ module.exports = function (io) {
 
 		//lobby challenge user handler
 		socket.on("challengeUser", function (challengedUserId) {
-			challengedUserId = parseInt(challengedUserId);
+			var challengedUser = lobby.getUserById(challengedUserId);
 
-			//can't challenge your self obviously
-			if (challengedUserId !== socket.session.user.id) {
-				//find the correct socketId and send the challenge only to that user
-				_.forOwn(lobby.connected, function (data, socketId) {
-					if (data.session.user.id === challengedUserId) {
-						//send the challenger data to the challenged user
-						socket.broadcast.to(socketId).emit("challenge", socket.session.user);
+			//can't challenge your self obviously and both users must be available
+			if (challengedUser.id !== socket.session.user.id && challengedUser.status === "available" && socket.session.user.status === "available") {
 
-						//add new pending game go the games list
-						socket.session.user.socketId = lobby.getUserSocketId(socket.session.user.id);
-						data.session.user.socketId = lobby.getUserSocketId(data.session.user.id);
+				//update both user's status to busy
+				lobby.updateUserStatus(socket.session.user.id, "busy");
+				lobby.updateUserStatus(challengedUser.id, "busy");
 
-						lobby.games.push({
-							type: "pending",
-							players: [
-								socket.session.user,
-								data.session.user
-							]
-						});
+				//send the challenger data to the challenged user
+				socket.broadcast.to(challengedUser.socketId).emit("challenge", socket.session.user);
 
-						//update the games list
-						lobby.emit("updateGamesList", lobby.games);
-
-						//wait 10 seconds and cancel the challenge
-						setTimeout(function () {
-							lobby.cancelChallenge(socket.session.user.id);
-						}, 10000);
-
-					}
+				//add new pending game go the games list
+				lobby.games.push({
+					status: "pending",
+					players: [
+						socket.session.user,
+						challengedUser
+					]
 				});
+
+				//update the connected users list
+				lobby.emit("updateUsersList", lobby.getConnectedUsers());
+
+				//update the games list
+				lobby.emit("updateGamesList", lobby.games);
+
+				//wait 10 seconds and cancel the challenge
+				setTimeout(function () {
+					lobby.cancelChallenge(socket.session.user.id);
+				}, 10000);
+
 			}
 
 		});
@@ -103,7 +103,16 @@ module.exports = function (io) {
 	lobby.getConnectedUsers = function () {
 		var users = [];
 
-		_.forOwn(this.connected, function (data, socketId) {
+		_.forOwn(lobby.connected, function (data, socketId) {
+
+			//if the status field is not set - set is as available
+			if (!data.session.user.status) {
+				data.session.user.status = "available";
+			}
+
+			//set the socketId parameter
+			data.session.user.socketId = socketId;
+
 			users.push(data.session.user);
 		});
 
@@ -111,20 +120,26 @@ module.exports = function (io) {
 	};
 
 	/**
-	 * Returns the socketId that matches the provided user id
+	 * Returns the user object that matches the provided userId
 	 * @param {Number} userId
-	 * @returns {String}
+	 * @returns {Object}
 	 */
-	lobby.getUserSocketId = function (userId) {
-		var result;
+	lobby.getUserById = function (userId) {
+		var connectedUsers = lobby.getConnectedUsers();
+		return _.find(connectedUsers, {id: parseInt(userId)});
+	};
 
-		_.forOwn(this.connected, function (data, socketId) {
-			if (data.session.user.id === userId) {
-				result = socketId;
+	/**
+	 * Updates the status of the user
+	 * @param {Number} userId
+	 * @param {String} status
+	 */
+	lobby.updateUserStatus = function (userId, status) {
+		_.forOwn(lobby.connected, function (data, socketId) {
+			if(data.session.user.id === userId){
+				data.session.user.status = status;
 			}
 		});
-
-		return result;
 	};
 
 	/**
@@ -132,14 +147,14 @@ module.exports = function (io) {
 	 * @param {Number} userId
 	 */
 	lobby.cancelChallenge = function (userId) {
-		var self = this;
+		//var self = this;
 		var canceledChallenge;
-		
+
 		//filter out the cancelled game
-		this.games = _.filter(this.games, function (game) {
+		lobby.games = _.filter(lobby.games, function (game) {
 			var valid = true;
 
-			if (game.type === "pending") {
+			if (game.status === "pending") {
 				game.players.forEach(function (player) {
 					if (player.id === userId) {
 						canceledChallenge = game;
@@ -150,27 +165,39 @@ module.exports = function (io) {
 
 			return valid;
 		});
-		
-		if(canceledChallenge){
-			//notify all related players that the challenge has been canceled
-			canceledChallenge.players.forEach(function (player){
-				self.to(player.socketId).emit("cancelChallenge");
+
+		if (canceledChallenge) {
+
+			//update the players status to available and notify all related players that the challenge has been canceled
+			canceledChallenge.players.forEach(function (player) {
+				lobby.updateUserStatus(player.id, "available");
+				lobby.to(player.socketId).emit("cancelChallenge");
 			});
+
+			//update the users list
+			lobby.emit("updateUsersList", lobby.getConnectedUsers());
 			
+			//update the games list
 			lobby.emit("updateGamesList", lobby.games);
 		}
-		
+
 	};
-	
-	
+
 	/**
 	 * Returns the game/challenge that the user is part of
 	 * @param {Number} userId
 	 * @returns {Object}
 	 */
-	lobby.findGameByuser = function (userId) {
-		//TODO: implement
-		return {};
+	lobby.findGameByUserId = function (userId) {
+		var game = _.find(lobby.games, function (game) {
+			game.players.forEach(function (player) {
+				if (player.id === userId) {
+					return true;
+				}
+			});
+		});
+
+		return game;
 	};
 
 	return lobby;

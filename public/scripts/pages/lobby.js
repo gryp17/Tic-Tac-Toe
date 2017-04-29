@@ -1,11 +1,16 @@
 function lobby() {
 	var myId = $("#user-id").val();
+	
+	var statusMap = {
+		"available": "alert alert-success",
+		"busy": "alert alert-warning"
+	};
 
 	var socket = io("/lobby");
 
 	//redirect the avatar-preview click to the actual file input
 	$(".avatar-preview").click(function () {
-		$(".avatar").click();
+		$("#update-avatar-form .avatar").click();
 	});
 
 	//on avatar change submit the form data
@@ -112,14 +117,14 @@ function lobby() {
 
 	//update the users list
 	socket.on("updateUsersList", function (users) {
-
+		
 		//empty the users list and generate it again with the new users data
 		$("#users-list").empty();
 		users.forEach(function (user) {
 
 			var item = $("<div>", {
 				id: user.id,
-				class: "alert alert-success",
+				class: statusMap[user.status],
 				text: user.username,
 				title: "Invite " + user.username + " for a game",
 				click: challengeUser
@@ -158,8 +163,8 @@ function lobby() {
 	function challengeUser() {
 		var userId = $(this).attr("id");
 
-		//can't challenge your self
-		if (userId !== myId) {
+		//can't challenge your self and can't challenge users that aren't available
+		if (userId !== myId && $(this).hasClass(statusMap.available)) {
 
 			$("#challenge-pending-modal").modal({
 				backdrop: "static",
