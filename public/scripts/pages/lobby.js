@@ -1,6 +1,9 @@
 function lobby() {
 	var myId = $("#user-id").val();
 	
+	var challengeTimeout = 20; //seconds
+	var challengeCounterInterval;
+	
 	var statusMap = {
 		"available": "alert alert-success",
 		"busy": "alert alert-warning"
@@ -166,34 +169,69 @@ function lobby() {
 		//can't challenge your self and can't challenge users that aren't available
 		if (userId !== myId && $(this).hasClass(statusMap.available)) {
 
+			$("#challenge-pending-modal .counter").html(challengeTimeout);
+
+			//show the challenge pending modal
 			$("#challenge-pending-modal").modal({
 				backdrop: "static",
 				keyboard: false,
 				show: true
 			});
 
+			//start the countdown
+			var counter = challengeTimeout - 1;
+			challengeCounterInterval = setInterval(function (){
+				
+				//if the time is over stop the interval and cancel the challenge
+				if(counter < 0){
+					clearInterval(challengeCounterInterval);
+					socket.emit("cancelChallenge");
+				}
+				
+				$("#challenge-pending-modal .counter").html(counter);
+				counter--;
+			}, 1000);
+			
 			socket.emit("challengeUser", userId);
 		}
 	}
 
 	//challenge handler
 	socket.on("challenge", function (challenger) {
-
-		console.log("received challenge from");
-		console.log(challenger);
-
+		
+		$("#challenge-modal .counter").html(challengeTimeout);
+		
 		$("#challenge-modal .challenger").html(challenger.username);
 		$("#challenge-modal .challenger").attr("href", "/user/" + challenger.id);
+		
+		//show the challenge modal
 		$("#challenge-modal").modal({
 			backdrop: "static",
 			keyboard: false,
 			show: true
 		});
+		
+		//start the countdown
+		var counter = challengeTimeout - 1;
+		challengeCounterInterval = setInterval(function () {
+
+			//if the time is over stop the interval and cancel the challenge
+			if (counter < 0) {
+				clearInterval(challengeCounterInterval);
+				socket.emit("cancelChallenge");
+			}
+
+			$("#challenge-modal .counter").html(counter);
+			counter--;
+		}, 1000);
 
 	});
 
 	//challenge canceled handler
 	socket.on("cancelChallenge", function () {
+		//stop the countdown
+		clearInterval(challengeCounterInterval);
+		
 		$("#challenge-modal").modal("hide");
 		$("#challenge-pending-modal").modal("hide");
 	});
@@ -206,18 +244,17 @@ function lobby() {
 
 	//challenge declined
 	$("#challenge-modal .btn-danger").click(function (){
-		//TODO: implement
-		console.log("challenge declined");
+		socket.emit("cancelChallenge");
 	});
 
 	//challenge canceled by the challenger
 	$("#challenge-pending-modal .btn-danger").click(function (){
-		//TODO: implement
-		console.log("challenge canceled by the challenger");
+		socket.emit("cancelChallenge");
 	});
 
 	//update the games list
 	socket.on("updateGamesList", function (games) {
+		
 		//TODO: implement
 		console.log("received games list");
 		console.log(games);

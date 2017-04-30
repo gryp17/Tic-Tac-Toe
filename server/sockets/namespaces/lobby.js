@@ -51,14 +51,16 @@ module.exports = function (io) {
 				//send the challenger data to the challenged user
 				socket.broadcast.to(challengedUser.socketId).emit("challenge", socket.session.user);
 
-				//add new pending game go the games list
-				lobby.games.push({
+				var game = {
 					status: "pending",
 					players: [
 						socket.session.user,
 						challengedUser
 					]
-				});
+				};
+
+				//add new pending game go the games list
+				lobby.games.push(game);
 
 				//update the connected users list
 				lobby.emit("updateUsersList", lobby.getConnectedUsers());
@@ -66,13 +68,13 @@ module.exports = function (io) {
 				//update the games list
 				lobby.emit("updateGamesList", lobby.games);
 
-				//wait 10 seconds and cancel the challenge
-				setTimeout(function () {
-					lobby.cancelChallenge(socket.session.user.id);
-				}, 10000);
-
 			}
 
+		});
+		
+		//cancel challenge event handler
+		socket.on("cancelChallenge", function () {
+			lobby.cancelChallenge(socket.session.user.id);
 		});
 
 		//disconnect event handler
@@ -118,7 +120,7 @@ module.exports = function (io) {
 
 		return users;
 	};
-
+	
 	/**
 	 * Returns the user object that matches the provided userId
 	 * @param {Number} userId
