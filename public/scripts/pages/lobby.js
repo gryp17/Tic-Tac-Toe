@@ -1,9 +1,9 @@
 function lobby() {
 	var myId = $("#user-id").val();
-	
+
 	var challengeTimeout = 20; //seconds
 	var challengeCounterInterval;
-	
+
 	var statusMap = {
 		"available": "alert alert-success",
 		"busy": "alert alert-warning"
@@ -120,7 +120,7 @@ function lobby() {
 
 	//update the users list
 	socket.on("updateUsersList", function (users) {
-		
+
 		//empty the users list and generate it again with the new users data
 		$("#users-list").empty();
 		users.forEach(function (user) {
@@ -180,37 +180,37 @@ function lobby() {
 
 			//start the countdown
 			var counter = challengeTimeout - 1;
-			challengeCounterInterval = setInterval(function (){
-				
+			challengeCounterInterval = setInterval(function () {
+
 				//if the time is over stop the interval and cancel the challenge
-				if(counter < 0){
+				if (counter < 0) {
 					clearInterval(challengeCounterInterval);
 					socket.emit("cancelChallenge");
 				}
-				
+
 				$("#challenge-pending-modal .counter").html(counter);
 				counter--;
 			}, 1000);
-			
+
 			socket.emit("challengeUser", userId);
 		}
 	}
 
 	//challenge handler
 	socket.on("challenge", function (challenger) {
-		
+
 		$("#challenge-modal .counter").html(challengeTimeout);
-		
+
 		$("#challenge-modal .challenger").html(challenger.username);
 		$("#challenge-modal .challenger").attr("href", "/user/" + challenger.id);
-		
+
 		//show the challenge modal
 		$("#challenge-modal").modal({
 			backdrop: "static",
 			keyboard: false,
 			show: true
 		});
-		
+
 		//start the countdown
 		var counter = challengeTimeout - 1;
 		challengeCounterInterval = setInterval(function () {
@@ -231,34 +231,64 @@ function lobby() {
 	socket.on("cancelChallenge", function () {
 		//stop the countdown
 		clearInterval(challengeCounterInterval);
-		
+
 		$("#challenge-modal").modal("hide");
 		$("#challenge-pending-modal").modal("hide");
 	});
 
 	//challenge accepted
 	$("#challenge-modal .btn-success").click(function () {
-		//TODO: implement
-		console.log("challenge accepted");
+		socket.emit("acceptChallenge");
 	});
 
 	//challenge declined
-	$("#challenge-modal .btn-danger").click(function (){
+	$("#challenge-modal .btn-danger").click(function () {
 		socket.emit("cancelChallenge");
 	});
 
 	//challenge canceled by the challenger
-	$("#challenge-pending-modal .btn-danger").click(function (){
+	$("#challenge-pending-modal .btn-danger").click(function () {
 		socket.emit("cancelChallenge");
 	});
 
 	//update the games list
 	socket.on("updateGamesList", function (games) {
-		
-		//TODO: implement
-		console.log("received games list");
-		console.log(games);
 
+		//empty the games list and generate it again with the new games data
+		$("#games-list").empty();
+		games.forEach(function (game) {
+
+			var item = $("<div>", {
+				class: "alert alert-info",
+				text: " vs ",
+				title: game.players[0].username+" VS "+game.players[1].username
+			});
+			
+			var challenger = $("<a>", {
+				href: "/user/" + game.players[0].id,
+				text: game.players[0].username,
+				target: "_blank",
+				title: "View user info"
+			});
+			
+			var challenged = $("<a>", {
+				href: "/user/" + game.players[1].id,
+				text: game.players[1].username,
+				target: "_blank",
+				title: "View user info"
+			});
+
+			item.prepend(challenger);
+			item.append(challenged);
+
+			$("#games-list").append(item);
+		});
+
+	});
+	
+	//start game event
+	socket.on("startGame", function (){		
+		window.open("/game", "_self");
 	});
 
 }

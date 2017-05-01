@@ -98,6 +98,18 @@
 
 }
 
+#games-list{
+	.alert{
+		margin-bottom: 5px;
+		font-size: 17px;
+		text-align: center;
+		
+		a{
+			font-weight: bold;
+		}
+	}
+}
+
 #challenge-modal, #challenge-pending-modal{
 
 	.modal-dialog{

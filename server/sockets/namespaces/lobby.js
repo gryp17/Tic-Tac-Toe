@@ -50,7 +50,7 @@ module.exports = function (io) {
 
 				//send the challenger data to the challenged user
 				socket.broadcast.to(challengedUser.socketId).emit("challenge", socket.session.user);
-
+				
 				var game = {
 					status: "pending",
 					players: [
@@ -65,9 +65,6 @@ module.exports = function (io) {
 				//update the connected users list
 				lobby.emit("updateUsersList", lobby.getConnectedUsers());
 
-				//update the games list
-				lobby.emit("updateGamesList", lobby.games);
-
 			}
 
 		});
@@ -75,6 +72,26 @@ module.exports = function (io) {
 		//cancel challenge event handler
 		socket.on("cancelChallenge", function () {
 			lobby.cancelChallenge(socket.session.user.id);
+		});
+		
+		//accept challenge event handler
+		socket.on("acceptChallenge", function () {
+			var game = lobby.findGameByUserId(socket.session.user.id);
+			
+			//if the pending game has been found
+			if(game && game.status === "pending"){
+				//set the game as active
+				game.status = "active"; 
+				
+				//send an event to both users and set their status to in-game
+				game.players.forEach(function (player){
+					lobby.updateUserStatus(player.id, "in-game");
+					lobby.to(player.socketId).emit("startGame");
+				});
+				
+				//update the games list
+				lobby.emit("updateGamesList", lobby.getActiveGames());
+			}
 		});
 
 		//disconnect event handler
@@ -119,6 +136,16 @@ module.exports = function (io) {
 		});
 
 		return users;
+	};
+	
+	/**
+	 * Returns all active games
+	 * @returns {Array}
+	 */
+	lobby.getActiveGames = function () {
+		return lobby.games.filter(function (game){
+			return game.status === "active";
+		});
 	};
 	
 	/**
@@ -169,7 +196,6 @@ module.exports = function (io) {
 		});
 
 		if (canceledChallenge) {
-
 			//update the players status to available and notify all related players that the challenge has been canceled
 			canceledChallenge.players.forEach(function (player) {
 				lobby.updateUserStatus(player.id, "available");
@@ -178,9 +204,6 @@ module.exports = function (io) {
 
 			//update the users list
 			lobby.emit("updateUsersList", lobby.getConnectedUsers());
-			
-			//update the games list
-			lobby.emit("updateGamesList", lobby.games);
 		}
 
 	};
@@ -192,11 +215,16 @@ module.exports = function (io) {
 	 */
 	lobby.findGameByUserId = function (userId) {
 		var game = _.find(lobby.games, function (game) {
+			var valid = false;
+			
+			//check if one of the players matches the userId
 			game.players.forEach(function (player) {
 				if (player.id === userId) {
-					return true;
+					valid = true;
 				}
 			});
+			
+			return valid;
 		});
 
 		return game;
