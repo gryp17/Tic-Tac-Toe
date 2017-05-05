@@ -76,10 +76,10 @@ module.exports = function (io) {
 		
 		//accept challenge event handler
 		socket.on("acceptChallenge", function () {
-			var game = lobby.findGameByUserId(socket.session.user.id);
+			var game = lobby.findGameByUserId(socket.session.user.id, "pending");
 			
 			//if the pending game has been found
-			if(game && game.status === "pending"){
+			if(game){
 				//set the game as active
 				game.status = "active"; 
 				
@@ -211,15 +211,16 @@ module.exports = function (io) {
 	/**
 	 * Returns the game/challenge that the user is part of
 	 * @param {Number} userId
+	 * @param {String} status (optional)
 	 * @returns {Object}
 	 */
-	lobby.findGameByUserId = function (userId) {
+	lobby.findGameByUserId = function (userId, status) {
 		var game = _.find(lobby.games, function (game) {
 			var valid = false;
 			
 			//check if one of the players matches the userId
 			game.players.forEach(function (player) {
-				if (player.id === userId) {
+				if (player.id === userId && (!status || game.status === status)) {
 					valid = true;
 				}
 			});

@@ -1,9 +1,6 @@
 module.exports = function (io) {
 	return {
-		//lobby namespace
-		lobby: require("./namespaces/lobby")(io)
-
-		//TODO: 
-		//game namespace
+		lobby: require("./namespaces/lobby")(io),
+		game: require("./namespaces/game")(io)
 	};
 };
