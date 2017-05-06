@@ -1,12 +1,16 @@
 var _ = require("lodash");
 var middleware = require("../../middleware");
+var cache = require("memory-cache");
 
-module.exports = function (io) {
+module.exports = function (io, app) {
 	//lobby namespace
 	var lobby = io.of("/lobby");
 
-	lobby.games = [];
-
+	//initialize the cache if necessary
+	if(cache.get("games") === null){
+		cache.put("games", []);
+	}
+		
 	//checks if the socket.io requests are authorized
 	lobby.use(middleware.socketIsAuthorized);
 
@@ -14,6 +18,9 @@ module.exports = function (io) {
 
 		//update the connected users list
 		lobby.emit("updateUsersList", lobby.getConnectedUsers());
+		
+		//send the games list only to the recently connected user
+		lobby.to(socket.id).emit("updateGamesList", lobby.getActiveGames());
 
 		//create a system message and send it to notify all clients that the user has joined the lobby
 		var data = {
@@ -60,8 +67,10 @@ module.exports = function (io) {
 				};
 
 				//add new pending game go the games list
-				lobby.games.push(game);
-
+				var games = cache.get("games");
+				games.push(game);
+				cache.put("games", games);
+				
 				//update the connected users list
 				lobby.emit("updateUsersList", lobby.getConnectedUsers());
 
@@ -143,7 +152,8 @@ module.exports = function (io) {
 	 * @returns {Array}
 	 */
 	lobby.getActiveGames = function () {
-		return lobby.games.filter(function (game){
+		var games = cache.get("games");
+		return games.filter(function (game){
 			return game.status === "active";
 		});
 	};
@@ -176,11 +186,11 @@ module.exports = function (io) {
 	 * @param {Number} userId
 	 */
 	lobby.cancelChallenge = function (userId) {
-		//var self = this;
 		var canceledChallenge;
 
 		//filter out the cancelled game
-		lobby.games = _.filter(lobby.games, function (game) {
+		var games = cache.get("games");		
+		games = _.filter(games, function (game) {
 			var valid = true;
 
 			if (game.status === "pending") {
@@ -194,6 +204,9 @@ module.exports = function (io) {
 
 			return valid;
 		});
+				
+		//update the games cache
+		cache.put("games", games);
 
 		if (canceledChallenge) {
 			//update the players status to available and notify all related players that the challenge has been canceled
@@ -207,7 +220,7 @@ module.exports = function (io) {
 		}
 
 	};
-
+	
 	/**
 	 * Returns the game/challenge that the user is part of
 	 * @param {Number} userId
@@ -215,7 +228,7 @@ module.exports = function (io) {
 	 * @returns {Object}
 	 */
 	lobby.findGameByUserId = function (userId, status) {
-		var game = _.find(lobby.games, function (game) {
+		var game = _.find(cache.get("games"), function (game) {
 			var valid = false;
 			
 			//check if one of the players matches the userId

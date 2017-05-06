@@ -253,7 +253,7 @@ function lobby() {
 
 	//update the games list
 	socket.on("updateGamesList", function (games) {
-
+		
 		//empty the games list and generate it again with the new games data
 		$("#games-list").empty();
 		games.forEach(function (game) {

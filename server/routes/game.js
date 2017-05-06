@@ -13,7 +13,8 @@ router.get("/", middleware.isLoggedIn, function (req, res, next) {
 	
 	if(game){
 		res.render("game", {
-			user: req.session.user
+			user: req.session.user,
+			game: game
 		});
 	}else{
 		res.redirect("/lobby");

@@ -25,7 +25,7 @@ var server = app.listen(config.port, function () {
 
 //setup the socket.io listeners
 var io = require("socket.io")(server);
-var socketNamespaces = require("./sockets")(io);
+var socketNamespaces = require("./sockets")(io, app);
 
 //save the socket namespaces
 app.set("socketNamespaces", socketNamespaces);
