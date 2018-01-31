@@ -172,12 +172,8 @@ function lobby() {
 			$("#challenge-pending-modal .counter").html(challengeTimeout);
 
 			//show the challenge pending modal
-			$("#challenge-pending-modal").modal({
-				backdrop: "static",
-				keyboard: false,
-				show: true
-			});
-
+			$("#challenge-pending-modal").modal("show");
+			
 			//start the countdown
 			var counter = challengeTimeout - 1;
 			challengeCounterInterval = setInterval(function () {
@@ -204,12 +200,8 @@ function lobby() {
 		$("#challenge-modal .challenger").html(challenger.username);
 		$("#challenge-modal .challenger").attr("href", "/user/" + challenger.id);
 
-		//show the challenge modal
-		$("#challenge-modal").modal({
-			backdrop: "static",
-			keyboard: false,
-			show: true
-		});
+		//show the challenge modal		
+		$("#challenge-modal").modal("show");
 
 		//start the countdown
 		var counter = challengeTimeout - 1;
