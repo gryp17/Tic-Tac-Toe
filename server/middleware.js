@@ -98,7 +98,7 @@ module.exports = {
 			if (result) {
 				res.send("The username is taken");
 			} else {
-				next(null);
+				next();
 			}
 		});
 
@@ -149,7 +149,7 @@ module.exports = {
 						return done("Failed to delete the old avatar");
 					}
 					
-					done(null);
+					done();
 				});
 			});
 		}
@@ -178,7 +178,7 @@ module.exports = {
 				return res.send(err);
 			}
 			
-			next(null);
+			next();
 		});
 
 	}
