@@ -10,12 +10,19 @@ module.exports = function (io, app) {
 
 	game.on("connection", function (socket) {
 		
-		//TODO:
-		//join a room that is reserved only for the players in this game
-		
 		//lobby namespace
 		var lobby = app.get("socketNamespaces").lobby;
-		var activeGame = lobby.findGameByUserId(socket.session.user.id, "active");
+		
+		//find the game that this user belongs to
+		var activeGame = lobby.findGameByUserId(socket.session.user.id, "active");		
+		var gameRoomId = activeGame.players[0].id+"-"+activeGame.players[1].id;
+		
+		//join a room that is reserved only for the players in this game
+		socket.join(gameRoomId);
+		
+		//emit the start game event to both players and indicate that it's the first player's turn
+		activeGame.turn = activeGame.players[0].id;
+		game.to(gameRoomId).emit("startGame", activeGame.turn);
 
 		//disconnect event handler
 		socket.on("disconnect", function () {
