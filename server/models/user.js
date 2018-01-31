@@ -69,6 +69,7 @@ module.exports = function () {
 		//delete the fields that shouldn't be changed
 		delete data.id;
 		delete data.username;
+		delete data.created;
 		
 		connection.query("UPDATE user SET ? WHERE ?", [data, {id: id}], function (err, result){
 			done(err, result);
