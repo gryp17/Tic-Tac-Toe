@@ -175,8 +175,9 @@ function lobby() {
 			$("#challenge-pending-modal").modal("show");
 			
 			//start the countdown
-			var counter = challengeTimeout - 1;
+			var counter = challengeTimeout;
 			challengeCounterInterval = setInterval(function () {
+				counter--;
 
 				//if the time is over stop the interval and cancel the challenge
 				if (counter < 0) {
@@ -185,7 +186,6 @@ function lobby() {
 				}
 
 				$("#challenge-pending-modal .counter").html(counter);
-				counter--;
 			}, 1000);
 
 			socket.emit("challengeUser", userId);
