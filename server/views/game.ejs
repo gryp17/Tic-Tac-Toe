@@ -6,15 +6,16 @@
 		<% include partials/scripts.ejs %>
 	</head>
 	<body class="game">
-
+		<input type="hidden" id="user-id" value="<%= user.id %>"/>
+		
 		<div class="container">
 
 			game page
 			
 			<hr/>
 			
-			<%- JSON.stringify(game) %> 
-
+			<table id="game-map" border="1"></table>
+			
 		</div>
 
 	</body>
