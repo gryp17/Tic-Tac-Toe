@@ -1,10 +1,13 @@
 @import "_bootstrap";
 @import "utils/_variables";
 @import "utils/_common";
+@import "utils/_animations";
 
 body{
 	background: url("/img/pattern.png");
-		
+	
+	@import "components/_chat";
+	
 	&.index{
 		@import "pages/_index";
 	}

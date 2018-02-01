@@ -72,7 +72,8 @@ gulp.task("js-libs", function () {
 		"./bower_components/bootstrap-sass/assets/javascripts/bootstrap.min.js",
 		"./bower_components/toastr/toastr.min.js",
 		"./bower_components/socket.io-client/dist/socket.io.min.js",
-		"./bower_components/moment/min/moment.min.js"
+		"./bower_components/moment/min/moment.min.js",
+		"./bower_components/lodash/dist/lodash.min.js"
 	])
 			.pipe(concat("lib.js"))
 			.pipe(gulp.dest(jsLibsDestination));

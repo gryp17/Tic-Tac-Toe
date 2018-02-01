@@ -1,9 +1,44 @@
 
-#game-map{
-	td{
-		width: 80px;
-		height: 80px;
+#chat{
+	margin-top: 15px;
+}
+
+.player-wrapper{
+
+	.player{
+		.avatar{
+			display: block;
+			margin: auto;
+			width: 70%;
+
+			@media (min-width: 450px) and (max-width: 768px){
+				width: 40%
+			}
+		}
+
+		.username{
+			text-align: center;
+			font-size: 26px;
+		}
+	}
+
+	.counter{
+		margin-top: 15px;
 		text-align: center;
-		font-size: 55px;
+		font-weight: bold;
+		font-size: 32px;
+	}
+
+}
+
+#game-map{
+	width: 100%;
+
+	td{
+		width: 33%;
+	}
+
+	@media (max-width: 768px){
+		margin-top: 20px;
 	}
 }

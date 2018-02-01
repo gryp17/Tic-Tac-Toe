@@ -20,7 +20,7 @@ module.exports = function (io, app) {
 		//join a room that is reserved only for the players in this game
 		socket.join(gameRoomId);
 		
-		//emit the start game event to both players and indicate that it's the first player's turn
+		//emit the update game event to both players and indicate that it's the first player's turn
 		myGame.playerTurn = myGame.players[0].id;
 		game.updateGame(myGame);
 		

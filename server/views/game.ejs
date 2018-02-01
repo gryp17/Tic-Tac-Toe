@@ -10,11 +10,31 @@
 		
 		<div class="container">
 
-			game page
+			<!-- game chat -->
+			<div id="chat" class="well">
+				<div class="chat-body">
+				</div>							
+				<div class="text-box">
+					<div class="input-group">
+						<input type="text" class="form-control" placeholder="Message"/>
+						<span class="input-group-btn">
+							<button class="btn btn-primary" type="button">Send</button>
+						</span>
+					</div>
+				</div>
+			</div>
 			
-			<hr/>
-			
-			<table id="game-map" border="1"></table>
+			<div class="row">
+				<div class="player-wrapper col-xs-6 col-sm-3">
+					<div class="player"></div>
+				</div>
+				<div class="player-wrapper col-xs-6 col-sm-push-6 col-sm-3">
+					<div class="player"></div>
+				</div>
+				<div class="col-xs-12 col-sm-pull-3 col-sm-6">
+					<table id="game-map" class="table table-bordered" border="1"></table>
+				</div>
+			</div>
 			
 		</div>
 
