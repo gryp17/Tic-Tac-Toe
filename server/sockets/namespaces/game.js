@@ -5,10 +5,16 @@ module.exports = function (io, app) {
 	//game namespace
 	var game = io.of("/game");
 	
+	var disconnectTimeoutPeriod = 5; //seconds
+	var disconnectTimeouts = {};
+	
 	//checks if the socket.io requests are authorized
 	game.use(middleware.socketIsAuthorized);
 
 	game.on("connection", function (socket) {
+		
+		//clear any disconnect timeouts for this user
+		clearTimeout(disconnectTimeouts[socket.session.user.id]);
 		
 		//lobby namespace
 		var lobby = app.get("socketNamespaces").lobby;
@@ -22,6 +28,19 @@ module.exports = function (io, app) {
 		
 		//emit the update game event only to the player that has just connected
 		game.initGame(socket, myGame);
+		
+		//game chat message handler
+		socket.on("chatMessage", function (message) {
+			//add the type, date and author attributes and emit the message to both players
+			var data = {
+				type: "user",
+				message: message,
+				date: new Date(),
+				author: socket.session.user
+			};
+
+			game.to(gameRoomId).emit("chatMessage", data);
+		});
 		
 		//make move handler
 		socket.on("makeMove", function (coordinates){
@@ -43,11 +62,37 @@ module.exports = function (io, app) {
 				game.updateGame(myGame);
 			}
 		});
+		
+		//player turn timeout handler
+		socket.on("playerTurnTimeout", function (){
+			//if the player hasn't made any moves (has timed out) mark the other player as winner
+			var winner = _.find(myGame.players, function (player) {
+				return player.id !== socket.session.user.id;
+			});
+				
+			game.gameOver(winner, myGame);
+		});
 
 		//disconnect event handler
 		socket.on("disconnect", function () {
-			//TODO: send chat message
-			console.log("@@@@@ user disconnected");
+			
+			//schedule a timeout - if the player doesn't reconnect in X seconds the game is won by the other player
+			disconnectTimeouts[socket.session.user.id] = setTimeout(function (){
+				var winner = _.find(myGame.players, function (player) {
+					return player.id !== socket.session.user.id;
+				});
+				
+				game.gameOver(winner, myGame);
+			}, disconnectTimeoutPeriod * 1000);
+			
+			//create a system message and send it to notify both players that the user has left the game
+			var data = {
+				type: "system disconnected",
+				message: socket.session.user.username + " left the game",
+				date: new Date()
+			};
+
+			game.to(gameRoomId).emit("chatMessage", data);			
 		});
 
 	});
@@ -67,7 +112,9 @@ module.exports = function (io, app) {
 	 * @param {Object} socket
 	 * @param {Object} myGame
 	 */
-	game.initGame = function (socket, myGame){		
+	game.initGame = function (socket, myGame){
+		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;
+		
 		//initialize an empty game map if the map is not set yet
 		if(!myGame.gameMap){
 			myGame.gameMap = [
@@ -83,6 +130,18 @@ module.exports = function (io, app) {
 		}
 				
 		game.to(socket.id).emit("updateGame", myGame);
+		
+		//create a system message and send it to notify both players that the user has joined the lobby
+		var data = {
+			type: "system connected",
+			message: socket.session.user.username + " joined the game",
+			date: new Date()
+		};
+		
+		//send the message with some delay to make sure both players have joined the game
+		setTimeout(function (){
+			game.to(gameRoomId).emit("chatMessage", data);
+		}, 1000);
 	};
 		
 	/**
@@ -109,6 +168,20 @@ module.exports = function (io, app) {
 		});
 		
 		return myGame;
+	};
+	
+	/**
+	 * Notifies both player that the game has finished
+	 * @param {Object} winner
+	 * @param {Object} myGame
+	 */
+	game.gameOver = function (winner, myGame){
+		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;	
+		
+		//TODO:
+		//insert database records etc.
+		
+		game.to(gameRoomId).emit("gameOver", winner);
 	};
 
 	return game;
