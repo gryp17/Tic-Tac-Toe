@@ -20,9 +20,8 @@ module.exports = function (io, app) {
 		//join a room that is reserved only for the players in this game
 		socket.join(gameRoomId);
 		
-		//emit the update game event to both players and indicate that it's the first player's turn
-		myGame.playerTurn = myGame.players[0].id;
-		game.updateGame(myGame);
+		//emit the update game event only to the player that has just connected
+		game.initGame(socket, myGame);
 		
 		//make move handler
 		socket.on("makeMove", function (coordinates){
@@ -62,14 +61,13 @@ module.exports = function (io, app) {
 	game.getMyGame = function (lobbyNamespace, socket){
 		return lobbyNamespace.findGameByUserId(socket.session.user.id, "active");
 	};
-		
+	
 	/**
-	 * Broadcasts the game object to all players in that game
+	 * Sends the game object only to the current user
+	 * @param {Object} socket
 	 * @param {Object} myGame
 	 */
-	game.updateGame = function (myGame){
-		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;
-		
+	game.initGame = function (socket, myGame){		
 		//initialize an empty game map if the map is not set yet
 		if(!myGame.gameMap){
 			myGame.gameMap = [
@@ -78,7 +76,21 @@ module.exports = function (io, app) {
 				[0, 0, 0]
 			];
 		}
+		
+		//if the player turn is not set - the first player always has the first turn
+		if(!myGame.playerTurn){
+			myGame.playerTurn = myGame.players[0].id;
+		}
 				
+		game.to(socket.id).emit("updateGame", myGame);
+	};
+		
+	/**
+	 * Broadcasts the game object to all players in that game
+	 * @param {Object} myGame
+	 */
+	game.updateGame = function (myGame){
+		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;				
 		game.to(gameRoomId).emit("updateGame", myGame);
 	};
 	

@@ -8,9 +8,9 @@ function game() {
 
 	//update game handler
 	socket.on("updateGame", function (game) {
-		console.log("it's player " + game.playerTurn + " turn");
-
-		console.log(game);
+		
+		//clear any counter/countdowns
+		clearInterval(playerTurnCounterInterval);
 
 		$("#game-map").empty();
 
@@ -27,7 +27,6 @@ function game() {
 				var img = mapCellValue(value);
 
 				td.append(img);
-
 				tr.append(td);
 			});
 
@@ -47,6 +46,7 @@ function game() {
 			if (index === 0) {
 				playerData = _.find(game.players, {id: myId});
 
+				//if it's his turn - show the "tada" animation
 				if (game.playerTurn === myId) {
 					$(this).addClass("tada");
 				}
@@ -56,25 +56,15 @@ function game() {
 				});
 			}
 			
+			//check if we should display the player turn counter
 			var addCounter = playerData.id === myId && game.playerTurn === myId;
 			
+			//generate the DOM elements for the player data
 			generatePlayerData($(this), playerData, addCounter);
 			
+			//start the player turn countdown
 			if(addCounter){
-				//start the countdown
-				var counter = playerTurnTimeout;
-				playerTurnCounterInterval = setInterval(function () {
-					counter--;
-
-					//if the time is over stop the interval and cancel the challenge
-					if (counter === 0) {
-						clearInterval(playerTurnCounterInterval);
-						//TODO: terminate the game
-						console.log("TIME OVER");
-					}
-
-					$(".player-wrapper > .counter").html(counter);
-				}, 1000);
+				startTurnCountdown();
 			}
 			
 		});
@@ -138,6 +128,26 @@ function game() {
 		profileLink.append(avatar);
 		profileLink.append(username);
 		wrapper.append(profileLink);
+	}
+	
+	/**
+	 * Starts the player turn countdown
+	 */
+	function startTurnCountdown() {
+		var counter = playerTurnTimeout;
+		
+		playerTurnCounterInterval = setInterval(function () {
+			counter--;
+
+			//if the time is over stop the interval and cancel the challenge
+			if (counter === 0) {
+				clearInterval(playerTurnCounterInterval);
+				//TODO: terminate the game and mark it as lost by the player
+				console.log("TIME OVER");
+			}
+
+			$(".player-wrapper > .counter").html(counter);
+		}, 1000);
 	}
 
 	/**
