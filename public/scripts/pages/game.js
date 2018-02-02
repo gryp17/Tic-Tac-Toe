@@ -3,6 +3,7 @@ function game() {
 	
 	var playerTurnTimeout = 15; //seconds
 	var playerTurnCounterInterval;
+	var gameOverRedirectDelay = 5; //seconds
 
 	var socket = io("/game");
 
@@ -84,17 +85,30 @@ function game() {
 	
 	//game over handler
 	socket.on("gameOver", function (winner) {
-		console.log("GAME OVER");
-		console.log("the winner is ", winner);
+		$("#game-over-modal .game-over-text").removeClass("win lose");
 		
-		if(winner.id === myId){
-			console.log("you have won");
-		}else{
-			console.log("you have lost");
-		}
+		//set the correct class in order to show the lose or win message
+		var textClass = winner.id === myId ? "win" : "lose";
 		
-		//TODO:
-		//show a modal indicating that you have won/lost and with a 5 seconds timer and then redirect to the lobby
+		$("#game-over-modal .game-over-text").addClass(textClass);
+		
+		//start set the countdown
+		var countdown = gameOverRedirectDelay;
+		$("#game-over-modal .counter").html(countdown);
+		
+		setInterval(function (){
+			countdown--;
+			$("#game-over-modal .counter").html(countdown);
+			
+			//when the countdown is over redirect to the lobby
+			if(countdown === 0){
+				window.location = "/lobby";
+			}
+			
+		}, 1000);
+		
+		//show the modal
+		$("#game-over-modal").modal("show");
 		
 	});
 

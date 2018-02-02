@@ -42,3 +42,37 @@
 		margin-top: 20px;
 	}
 }
+
+#game-over-modal{
+	margin-top: 135px;
+	
+	.modal-body{
+		text-align: center;
+		
+		.game-over-text{
+			margin-bottom: 10px;
+			font-weight: bold;
+			font-size: 25px;
+			
+			.winner, .loser{
+				display: none;
+			}
+			
+			&.win{
+				.winner{
+					display: block;
+				}
+				
+				color: $green;
+			}
+			
+			&.lose{
+				.loser{
+					display: block;
+				}
+				
+				color: $red;
+			}
+		}
+	}
+}
