@@ -1,5 +1,9 @@
 var _ = require("lodash");
+var async = require("async");
+
 var middleware = require("../../middleware");
+var GameModel = require("../../models/game");
+var PlayerModel = require("../../models/player");
 
 module.exports = function (io, app) {
 	//game namespace
@@ -75,6 +79,12 @@ module.exports = function (io, app) {
 
 		//disconnect event handler
 		socket.on("disconnect", function () {
+			var myGame = game.getMyGame(lobby, socket);
+			
+			//don't do anything if the game has terminated already
+			if(!myGame){
+				return;
+			}
 			
 			//schedule a timeout - if the player doesn't reconnect in X seconds the game is won by the other player
 			disconnectTimeouts[socket.session.user.id] = setTimeout(function (){
@@ -179,13 +189,43 @@ module.exports = function (io, app) {
 	game.gameOver = function (lobby, winner, myGame){
 		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;	
 				
-		//TODO:
-		//insert database records etc.
+		gameModel = new GameModel();
+		playerModel = new PlayerModel();
 		
-		//hide the game from the lobby view
-		lobby.deleteGame(myGame);
+		//insert the "game" database record
+		gameModel.create(winner.id, myGame.gameMap, function (err, result){
+			if(err){
+				console.log("failed to insert the game record");
+				console.log(err);
+				return;
+			}
+			
+			var gameId = result.insertId;
+			
+			//insert both "player" records
+			async.parallel([
+				function (done){
+					playerModel.create(myGame.players[0].id, gameId, done);
+				},
+				function (done){
+					playerModel.create(myGame.players[1].id, gameId, done);
+				}
+			], function (err){
+				if(err){
+					console.log("failed to insert the player records");
+					console.log(err);
+					return;
+				}
+				
+				//hide the game from the lobby view
+				lobby.deleteGame(myGame);
+
+				//send the game over event to the players (it redirects them to the lobby)
+				game.to(gameRoomId).emit("gameOver", winner);
+				
+			});
+		});
 		
-		game.to(gameRoomId).emit("gameOver", winner);
 	};
 
 	return game;
