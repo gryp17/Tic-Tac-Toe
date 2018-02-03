@@ -54,7 +54,7 @@
 			font-weight: bold;
 			font-size: 25px;
 			
-			.winner, .loser{
+			.winner, .loser, .lucker{
 				display: none;
 			}
 			
@@ -72,6 +72,14 @@
 				}
 				
 				color: $red;
+			}
+			
+			&.tie{
+				.lucker{
+					display: block;
+				}
+				
+				color: $blue;
 			}
 		}
 	}

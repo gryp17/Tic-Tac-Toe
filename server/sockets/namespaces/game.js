@@ -64,6 +64,9 @@ module.exports = function (io, app) {
 				
 				//update the game
 				game.updateGame(myGame);
+				
+				//check the game map after each turn
+				game.checkGameMap(lobby, myGame);
 			}
 		});
 		
@@ -74,7 +77,7 @@ module.exports = function (io, app) {
 				return player.id !== socket.session.user.id;
 			});
 				
-			game.gameOver(lobby, winner, myGame);
+			game.gameOver(lobby, winner.id, myGame);
 		});
 
 		//disconnect event handler
@@ -92,7 +95,7 @@ module.exports = function (io, app) {
 					return player.id !== socket.session.user.id;
 				});
 				
-				game.gameOver(lobby, winner, myGame);
+				game.gameOver(lobby, winner.id, myGame);
 			}, disconnectTimeoutPeriod * 1000);
 			
 			//create a system message and send it to notify both players that the user has left the game
@@ -181,9 +184,116 @@ module.exports = function (io, app) {
 	};
 	
 	/**
+	 * Checks the game map and notifies the players if anybody has won
+	 * @param {Object} lobby
+	 * @param {Object} myGame
+	 */
+	game.checkGameMap = function (lobby, myGame) {
+		var gameOver = false;
+		var winner = null;
+
+		//get the number of empty cells
+		var emptyCells = getEmptyCells(myGame.gameMap);
+
+		//build a multidimensional array of arrays containing all rows, columns and diagonals
+		var rows = [
+			myGame.gameMap, //default map used for the horizontal checks
+			_.zip.apply(_, myGame.gameMap), //inverted map used for the vertical checks
+			getDiagonals(myGame.gameMap) //both diagonals
+		];
+
+		outerLoop:
+		for (var i = 0; i < rows.length; i++) {
+			var groups = rows[i];
+
+			for (var j = 0; j < groups.length; j++) {
+				var result = checkRow(rows[i][j]);
+
+				if (result !== null) {
+					gameOver = true;
+					winner = result;
+					break outerLoop;
+				}
+			}
+		}
+
+		//if there are no more empty cells and nobody has won - the game is a tie
+		if (!gameOver && emptyCells === 0) {
+			gameOver = true;
+			winner = null;
+		}
+
+		//if the game is over for whatever reason - notify the players and add the database records
+		if(gameOver){
+			game.gameOver(lobby, winner, myGame);
+		}
+	};
+
+	/**
+	 * Returns the two diagonals of the map
+	 * @param {Array} map
+	 * @returns {Array}
+	 */
+	function getDiagonals(map) {
+		var leftDiagonal = [];
+		for (var i = 0; i < map.length; i++) {
+			leftDiagonal.push(map[i][i]);
+		}
+
+		var rightDiagonal = [];
+		var row = 0;
+		for (var i = map.length - 1; i >= 0; i--) {
+			rightDiagonal.push(map[row][i]);
+			row++;
+		}
+
+		return [
+			leftDiagonal,
+			rightDiagonal
+		];
+	}
+
+	/**
+	 * Returns the number of empty cells
+	 * @param {Array} map
+	 * @returns {Number}
+	 */
+	function getEmptyCells(map) {
+		var count = 0;
+
+		map.forEach(function (row) {
+			row.forEach(function (cell) {
+				if (cell === 0) {
+					count++;
+				}
+			});
+		});
+
+		return count;
+	}
+
+	/**
+	 * Checks if all the numbers in the row are the same
+	 * Returns their value if they coincide or null otherwise
+	 * @param {Array} row
+	 * @returns {Number|null}
+	 */
+	function checkRow(row) {
+		var win = row.every(function (value, index, list) {
+			return list[0] !== 0 && value === list[0];
+		});
+
+		if (win) {
+			return row[0];
+		} else {
+			return null;
+		}
+	}
+	
+	/**
 	 * Notifies both player that the game has finished
 	 * @param {Object} lobby
-	 * @param {Object} winner
+	 * @param {Number} winner
 	 * @param {Object} myGame
 	 */
 	game.gameOver = function (lobby, winner, myGame){
@@ -193,7 +303,7 @@ module.exports = function (io, app) {
 		playerModel = new PlayerModel();
 		
 		//insert the "game" database record
-		gameModel.create(winner.id, myGame.gameMap, function (err, result){
+		gameModel.create(winner, myGame.gameMap, function (err, result){
 			if(err){
 				console.log("failed to insert the game record");
 				console.log(err);

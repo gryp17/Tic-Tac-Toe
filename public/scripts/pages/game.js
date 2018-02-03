@@ -86,8 +86,16 @@ function game() {
 	socket.on("gameOver", function (winner) {
 		$("#game-over-modal .game-over-text").removeClass("win lose");
 		
-		//set the correct class in order to show the lose or win message
-		var textClass = winner.id === myId ? "win" : "lose";
+		//set the correct class in order to show the lose, win or tie message
+		var textClass;
+		
+		if(winner === null){
+			textClass = "tie";
+		}else if(winner === myId){
+			textClass = "win";
+		}else{
+			textClass = "lose";
+		}
 		
 		$("#game-over-modal .game-over-text").addClass(textClass);
 		

@@ -9,7 +9,7 @@ CREATE TABLE `user` (
 
 CREATE TABLE `game` (
 	`id` int(11) AUTO_INCREMENT PRIMARY KEY,
-	`winner` int(11) NOT NULL,
+	`winner` int(11) NULL,
 	`map` varchar(500) NOT NULL,
 	`finished` datetime NOT NULL,
 	CONSTRAINT `game_winner_fk` FOREIGN KEY (winner) REFERENCES user(id) ON UPDATE CASCADE ON DELETE CASCADE
