@@ -7,7 +7,6 @@ function game() {
 
 	var socket = io("/game");
 
-
 	/**
 	 * Sends the game chat message
 	 */

@@ -243,6 +243,34 @@ module.exports = function (io, app) {
 
 		return game;
 	};
+	
+	/**
+	 * Deletes the game from the games list
+	 * @param {Object} game
+	 */
+	lobby.deleteGame = function (game){
+		//filter out the game
+		var games = cache.get("games");		
+		games = _.filter(games, function (item) {
+			var valid = true;
+
+			if (item.status === "active") {
+				item.players.forEach(function (player) {
+					if (player.id === game.players[0].id) {
+						valid = false;
+					}
+				});
+			}
+
+			return valid;
+		});
+				
+		//update the games cache
+		cache.put("games", games);
+		
+		//update the games list
+		lobby.emit("updateGamesList", lobby.getActiveGames());
+	};
 
 	return lobby;
 };

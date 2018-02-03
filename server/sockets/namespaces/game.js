@@ -70,7 +70,7 @@ module.exports = function (io, app) {
 				return player.id !== socket.session.user.id;
 			});
 				
-			game.gameOver(winner, myGame);
+			game.gameOver(lobby, winner, myGame);
 		});
 
 		//disconnect event handler
@@ -82,7 +82,7 @@ module.exports = function (io, app) {
 					return player.id !== socket.session.user.id;
 				});
 				
-				game.gameOver(winner, myGame);
+				game.gameOver(lobby, winner, myGame);
 			}, disconnectTimeoutPeriod * 1000);
 			
 			//create a system message and send it to notify both players that the user has left the game
@@ -172,14 +172,18 @@ module.exports = function (io, app) {
 	
 	/**
 	 * Notifies both player that the game has finished
+	 * @param {Object} lobby
 	 * @param {Object} winner
 	 * @param {Object} myGame
 	 */
-	game.gameOver = function (winner, myGame){
+	game.gameOver = function (lobby, winner, myGame){
 		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;	
-		
+				
 		//TODO:
 		//insert database records etc.
+		
+		//hide the game from the lobby view
+		lobby.deleteGame(myGame);
 		
 		game.to(gameRoomId).emit("gameOver", winner);
 	};
