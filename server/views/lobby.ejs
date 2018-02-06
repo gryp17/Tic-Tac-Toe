@@ -10,24 +10,30 @@
 		<div class="container">
 
 			<!-- header -->
-			<div class="page-header">
-				<img class="avatar-preview" src="/upload/avatars/<%= user.avatar %>"/>
-				<input type="hidden" id="user-id" value="<%= user.id %>"/>
+			<div class="page-header row">
 				
-				Logged in as
+				<div class="col-xs-12 col-sm-9">
+					<img class="avatar-preview" src="/upload/avatars/<%= user.avatar %>"/>
+					<input type="hidden" id="user-id" value="<%= user.id %>"/>
+
+					Logged in as
+
+					<a class="profile-link" href="/user/<%= user.id %>">
+						<%= user.username %>
+					</a>
+
+					<form id="update-avatar-form" enctype="multipart/form-data">
+						<input class="avatar" name="avatar" type="file"/>
+					</form>
+				</div>
 				
-				<a class="profile-link" href="/user/<%= user.id %>">
-					<%= user.username %>
-				</a>
+				<div class="col-xs-12 col-sm-3">
+					<a class="btn btn-danger logout-btn" href="/logout">
+						<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+						Logout
+					</a>
+				</div>
 				
-				<form id="update-avatar-form" enctype="multipart/form-data">
-					<input class="avatar" name="avatar" type="file"/>
-				</form>
-				
-				<a class="btn btn-danger logout-btn" href="/logout">
-					<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-					Logout
-				</a>
 			</div>
 
 			<!-- lobby chat -->

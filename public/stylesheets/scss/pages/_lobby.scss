@@ -2,6 +2,10 @@
 .page-header{
 	font-size: 23px;
 	border-bottom: none;
+	
+	> div:last-child{
+		text-align: right;
+	}
 
 	.avatar-preview{
 		width: 70px;
@@ -18,10 +22,12 @@
 		font-weight: bold;
 	}
 
-	.logout-btn{
-		float: right;
-		margin-top: 20px;
+	@media (min-width: 768px){
+		.logout-btn{
+			margin-top: 20px;
+		}
 	}
+	
 }
 
 #users-list{
