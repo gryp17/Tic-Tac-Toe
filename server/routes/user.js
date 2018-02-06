@@ -4,6 +4,7 @@ var _ = require("lodash");
 var multipart = require("connect-multiparty");
 
 var UserModel = require("../models/user");
+var GameModel = require("../models/game");
 var middleware = require("../middleware");
 
 /**
@@ -11,6 +12,7 @@ var middleware = require("../middleware");
  */
 router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
 	var userModel = new UserModel();
+	var gameModel = new GameModel();
 	
 	//find the user that matches this id
 	userModel.findById(req.params.id, function (err, userData){
@@ -24,10 +26,20 @@ router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
 				message: "The user profile couldn't be found."
 			});
 		}else{
-			res.render("user", {
-				myUser: req.session.user,
-				userData: userData
+			
+			//get the user game history
+			gameModel.getGameHistory(userData.id, function (err, gameHistory){
+				if(err){
+					return next(err);
+				}
+				
+				res.render("user", {
+					myUser: req.session.user,
+					userData: userData,
+					gameHistory: gameHistory
+				});
 			});
+			
 		}
 				
 	});
