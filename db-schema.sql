@@ -16,8 +16,8 @@ CREATE TABLE `game` (
 );
 
 CREATE TABLE `player` (
-	`userId` int(11) NOT NULL,
 	`gameId` int(11) NOT NULL,
+	`userId` int(11) NOT NULL,
 	CONSTRAINT `player_pk` PRIMARY KEY (userId, gameId),
 	CONSTRAINT `player_user_fk` FOREIGN KEY (userId) REFERENCES user(id) ON UPDATE CASCADE ON DELETE CASCADE,
 	CONSTRAINT `player_game_fk` FOREIGN KEY (gameId) REFERENCES game(id) ON UPDATE CASCADE ON DELETE CASCADE

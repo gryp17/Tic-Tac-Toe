@@ -84,7 +84,6 @@ function game() {
 	
 	//game over handler
 	socket.on("gameOver", function (winner) {
-		$("#game-over-modal .game-over-text").removeClass("win lose");
 		
 		//set the correct class in order to show the lose, win or tie message
 		var textClass;
@@ -122,7 +121,7 @@ function game() {
 	//update game handler
 	socket.on("updateGame", function (game) {
 		
-		//clear any counter/countdowns
+		//clear any counters/countdowns
 		clearInterval(playerTurnCounterInterval);
 
 		$("#game-map").empty();

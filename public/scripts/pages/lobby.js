@@ -146,9 +146,11 @@ function lobby() {
 
 			var profileButton = $("<a>", {
 				class: "user-info",
-				href: "/user/" + user.id,
-				target: "_blank",
-				title: "View user info"
+				title: "View user info",
+				click: function (e){
+					e.stopPropagation();
+					window.open("/user/" + user.id, "_blank");
+				}
 			});
 
 			profileButton.append(profileIcon);
@@ -158,7 +160,7 @@ function lobby() {
 		});
 
 	});
-
+	
 	/**
 	 * Handler function that is called when a user is clicked
 	 * It sends a challenge to the selected user.

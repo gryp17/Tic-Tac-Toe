@@ -33,6 +33,33 @@ module.exports = function () {
 	};
 	
 	/**
+	 * Returns the user that matches the provided user id
+	 * @param {Number} id
+	 * @param {String} password
+	 * @param {Function} done
+	 */
+	this.findById = function (id, done) {
+		connection.query("SELECT * FROM user WHERE id = ?", [id], function (err, rows) {
+			if (err) {
+				return done(err);
+			}
+
+			if (!rows.length) {
+				done(null);
+			} else {
+				var user = rows[0];
+				
+				//if there is no avatar use the default one
+				if(!user.avatar){
+					user.avatar = app.get("config").uploads.defaultAvatar;
+				}
+				
+				done(null, user);
+			}
+		});
+	};
+	
+	/**
 	 * Adds a new user record and returns the inserted record
 	 * @param {String} username
 	 * @param {String} password

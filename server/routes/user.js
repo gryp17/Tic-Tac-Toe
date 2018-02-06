@@ -7,6 +7,34 @@ var UserModel = require("../models/user");
 var middleware = require("../middleware");
 
 /**
+ * User profile route
+ */
+router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
+	var userModel = new UserModel();
+	
+	//find the user that matches this id
+	userModel.findById(req.params.id, function (err, userData){
+		if(err){
+			return next(err);
+		}
+		
+		if(!userData){
+			res.render("error", {
+				title: "User not found",
+				message: "The user profile couldn't be found."
+			});
+		}else{
+			res.render("user", {
+				myUser: req.session.user,
+				userData: userData
+			});
+		}
+				
+	});
+	
+});
+
+/**
  * Update avatar
  */
 router.post("/updateAvatar", middleware.isLoggedIn, multipart(), function (req, res, next) {
