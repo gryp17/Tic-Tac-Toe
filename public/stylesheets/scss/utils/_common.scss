@@ -18,3 +18,34 @@
 #toast-container{
 	margin-top: 90px;
 }
+
+.page-header{
+	font-size: 23px;
+	border-bottom: none;
+	
+	> div:last-child{
+		text-align: right;
+	}
+
+	.avatar-preview{
+		width: 70px;
+		height: 70px;
+		border-radius: 100%;
+		cursor: pointer;
+	}
+
+	#update-avatar-form{
+		display: none;
+	}
+
+	.profile-link{
+		font-weight: bold;
+	}
+
+	@media (min-width: 768px){
+		.logout-btn{
+			margin-top: 20px;
+		}
+	}
+	
+}

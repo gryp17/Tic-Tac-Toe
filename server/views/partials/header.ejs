@@ -1,0 +1,25 @@
+<div class="page-header row">
+
+	<div class="col-xs-12 col-sm-9">
+		<img class="avatar-preview" src="/upload/avatars/<%= myUser.avatar %>"/>
+		<input type="hidden" id="user-id" value="<%= myUser.id %>"/>
+
+		Logged in as
+
+		<a class="profile-link" href="/user/<%= myUser.id %>">
+			<%= myUser.username %>
+		</a>
+
+		<form id="update-avatar-form" enctype="multipart/form-data">
+			<input class="avatar" name="avatar" type="file"/>
+		</form>
+	</div>
+
+	<div class="col-xs-12 col-sm-3">
+		<a class="btn btn-danger logout-btn" href="/logout">
+			<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+			Logout
+		</a>
+	</div>
+
+</div>

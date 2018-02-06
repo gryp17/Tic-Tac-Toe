@@ -7,11 +7,17 @@
 	</head>
 	<body class="user">
 
-		user profile
+		<div class="container">
+			<!-- header -->
+			<% include partials/header.ejs %>
+			
+			user profile
 
-		<hr/>
-		
-		<%= JSON.stringify(userData) %>
+			<hr/>
+
+			<%= JSON.stringify(userData) %>
+			
+		</div>
 		
 	</body>
 </html>

@@ -10,32 +10,8 @@
 		<div class="container">
 
 			<!-- header -->
-			<div class="page-header row">
-				
-				<div class="col-xs-12 col-sm-9">
-					<img class="avatar-preview" src="/upload/avatars/<%= user.avatar %>"/>
-					<input type="hidden" id="user-id" value="<%= user.id %>"/>
-
-					Logged in as
-
-					<a class="profile-link" href="/user/<%= user.id %>">
-						<%= user.username %>
-					</a>
-
-					<form id="update-avatar-form" enctype="multipart/form-data">
-						<input class="avatar" name="avatar" type="file"/>
-					</form>
-				</div>
-				
-				<div class="col-xs-12 col-sm-3">
-					<a class="btn btn-danger logout-btn" href="/logout">
-						<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
-						Logout
-					</a>
-				</div>
-				
-			</div>
-
+			<% include partials/header.ejs %>
+			
 			<!-- lobby chat -->
 			<div id="chat" class="well">
 				<div class="chat-body">
