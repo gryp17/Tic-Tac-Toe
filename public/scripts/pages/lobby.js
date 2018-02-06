@@ -146,10 +146,12 @@ function lobby() {
 
 			var profileButton = $("<a>", {
 				class: "user-info",
+				href: "/user/" + user.id,
+				target: "_blank",
 				title: "View user info",
 				click: function (e){
+					//prevent the parent click handler from firing also
 					e.stopPropagation();
-					window.open("/user/" + user.id, "_blank");
 				}
 			});
 
