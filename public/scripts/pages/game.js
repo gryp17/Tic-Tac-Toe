@@ -1,6 +1,4 @@
-function game() {
-	var myId = parseInt($("#user-id").val());
-	
+function game() {	
 	var playerTurnTimeout = 15; //seconds
 	var playerTurnCounterInterval;
 	var gameOverRedirectDelay = 5; //seconds
@@ -90,7 +88,7 @@ function game() {
 		
 		if(winner === null){
 			textClass = "tie";
-		}else if(winner === myId){
+		}else if(winner === myUser.id){
 			textClass = "win";
 		}else{
 			textClass = "lose";
@@ -156,20 +154,20 @@ function game() {
 
 			//in the first player wrapper always put the current user
 			if (index === 0) {
-				playerData = _.find(game.players, {id: myId});
+				playerData = _.find(game.players, {id: myUser.id});
 
 				//if it's his turn - show the "tada" animation
-				if (game.playerTurn === myId) {
+				if (game.playerTurn === myUser.id) {
 					$(this).addClass("tada");
 				}
 			} else {
 				playerData = _.find(game.players, function (player) {
-					return player.id !== myId;
+					return player.id !== myUser.id;
 				});
 			}
 			
 			//check if we should display the player turn counter
-			var addCounter = playerData.id === myId && game.playerTurn === myId;
+			var addCounter = playerData.id === myUser.id && game.playerTurn === myUser.id;
 			
 			//generate the DOM elements for the player data
 			generatePlayerData($(this), playerData, addCounter);
@@ -191,7 +189,7 @@ function game() {
 	function mapCellValue(value) {
 		var icon;
 
-		if (value === myId) {
+		if (value === myUser.id) {
 			icon = "icon-x.png";
 		} else if (value === 0) {
 			icon = "icon-transparent.png";

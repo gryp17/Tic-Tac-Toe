@@ -6,8 +6,11 @@
 		<% include partials/scripts.ejs %>
 	</head>
 	<body class="game">
-		<input type="hidden" id="user-id" value="<%= myUser.id %>"/>
 		
+		<script type="text/javascript">
+			var myUser = <%- JSON.stringify(myUser) %>;
+		</script>
+				
 		<div class="container">
 
 			<!-- game chat -->

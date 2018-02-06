@@ -1,6 +1,4 @@
-function lobby() {
-	var myId = $("#user-id").val();
-
+function lobby() {	
 	var challengeTimeout = 20; //seconds
 	var challengeCounterInterval;
 
@@ -168,10 +166,10 @@ function lobby() {
 	 * It sends a challenge to the selected user.
 	 */
 	function challengeUser() {
-		var userId = $(this).attr("id");
+		var userId = parseInt($(this).attr("id"));
 
 		//can't challenge your self and can't challenge users that aren't available
-		if (userId !== myId && $(this).hasClass(statusMap.available)) {
+		if (userId !== myUser.id && $(this).hasClass(statusMap.available)) {
 
 			$("#challenge-pending-modal .counter").html(challengeTimeout);
 
