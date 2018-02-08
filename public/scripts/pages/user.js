@@ -19,7 +19,7 @@ function user() {
 		gameHistory.forEach(function (game) {
 			if (!game.winner) {
 				WTL.tie++;
-			} else if (game.winner = myUser.id) {
+			} else if (game.winner === myUser.id) {
 				WTL.win++;
 			} else {
 				WTL.lose++;
