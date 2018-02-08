@@ -19,4 +19,8 @@ body{
 	&.game{
 		@import "pages/_game";
 	}
+	
+	&.user{
+		@import "pages/_user";
+	}
 }

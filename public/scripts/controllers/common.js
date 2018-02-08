@@ -1,4 +1,4 @@
-function common(){
+function CommonController(){
 	
 	toastr.options = {
 		positionClass: "toast-top-center"

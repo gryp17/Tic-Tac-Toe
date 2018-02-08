@@ -5,11 +5,11 @@
 		<% include partials/stylesheets.ejs %>
 		<% include partials/scripts.ejs %>
 	</head>
-	<body class="user">
+	<body class="user" data-controllers="User Tabs">
 
 		<script type="text/javascript">
 			var myUser = <%- JSON.stringify(myUser) %>;
-		var gameHistory = <%- JSON.stringify(gameHistory) %>;
+			var gameHistory = <%- JSON.stringify(gameHistory) %>;
 		</script>
 
 		<div class="container">

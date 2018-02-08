@@ -1,6 +1,6 @@
-function user() {
-	var myUser = window.myUser;
-	var gameHistory = window.gameHistory;
+function UserController(globals) {
+	var myUser = globals.myUser;
+	var gameHistory = globals.gameHistory;
 	
 	console.log(gameHistory);
 

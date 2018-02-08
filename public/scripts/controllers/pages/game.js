@@ -1,5 +1,5 @@
-function game() {
-	var myUser = window.myUser;
+function GameController(globals) {
+	var myUser = globals.myUser;
 	
 	var playerTurnTimeout = 15; //seconds
 	var playerTurnCounterInterval;

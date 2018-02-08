@@ -1,4 +1,4 @@
-function components() {
+function TabsController() {
 
 	//tabs view behaviour
 	$(".tab-button").click(function () {

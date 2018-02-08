@@ -18,7 +18,7 @@ var AutoPrefixerOptions = {
 
 var cssAppSource = "./public/stylesheets/scss/**/*.scss";
 var cssDestination = "./public/stylesheets/css";
-var jsAppSource = "./public/scripts/pages/*.js";
+var jsAppSource = "./public/scripts/controllers/**/*.js";
 var jsDestination = "./public/scripts/";
 var jsLibsDestination = "./public/scripts/";
 

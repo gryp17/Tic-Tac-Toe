@@ -1,5 +1,5 @@
-function lobby() {
-	var myUser = window.myUser;
+function LobbyController(globals) {
+	var myUser = globals.myUser;
 	
 	var challengeTimeout = 20; //seconds
 	var challengeCounterInterval;
