@@ -1,4 +1,6 @@
-function game() {	
+function game() {
+	var myUser = window.myUser;
+	
 	var playerTurnTimeout = 15; //seconds
 	var playerTurnCounterInterval;
 	var gameOverRedirectDelay = 5; //seconds

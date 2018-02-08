@@ -7,6 +7,11 @@
 	</head>
 	<body class="user">
 
+		<script type="text/javascript">
+			var myUser = <%- JSON.stringify(myUser) %>;
+			var gameHistory = <%- JSON.stringify(gameHistory) %>;
+		</script>
+		
 		<div class="container">
 			<!-- header -->
 			<% include partials/header.ejs %>

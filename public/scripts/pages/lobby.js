@@ -1,4 +1,6 @@
-function lobby() {	
+function lobby() {
+	var myUser = window.myUser;
+	
 	var challengeTimeout = 20; //seconds
 	var challengeCounterInterval;
 

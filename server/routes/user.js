@@ -34,7 +34,7 @@ router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
 				}
 				
 				delete userData.password;
-				
+								
 				res.render("user", {
 					myUser: req.session.user,
 					userData: userData,
