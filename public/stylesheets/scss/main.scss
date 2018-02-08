@@ -6,7 +6,7 @@
 body{
 	background: url("/img/pattern.png");
 	
-	@import "components/_chat";
+	@import "components/_tabs";
 	
 	&.index{
 		@import "pages/_index";

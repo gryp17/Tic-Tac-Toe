@@ -9,26 +9,62 @@
 
 		<script type="text/javascript">
 			var myUser = <%- JSON.stringify(myUser) %>;
-			var gameHistory = <%- JSON.stringify(gameHistory) %>;
+		var gameHistory = <%- JSON.stringify(gameHistory) %>;
 		</script>
-		
+
 		<div class="container">
 			<!-- header -->
 			<% include partials/header.ejs %>
-			
-			user profile
+
+
+			<!-- tab buttons -->
+			<div class="row no-pad">
+				<div class="tab-button col-xs-3 active" data-target="game-history">
+					Game History
+				</div>
+				<div class="tab-button col-xs-3" data-target="profile-settings">
+					Profile Settings
+				</div>
+			</div>
+
+			<!--
+			<div class="row">
+				<div class="col-xs-3">
+					<div class="tab-button active" data-target="game-history">
+						Game History
+					</div>
+				</div>
+				<div class="col-xs-3">
+					<div class="tab-button" data-target="profile-settings">
+						Profile Settings
+					</div>
+				</div>
+			</div>
+			-->
+
+			<!-- game history content -->
+			<div id="game-history" class="tab-content active">
+				game history
+			</div>
+
+			<!-- profile settings content -->
+			<div id="profile-settings" class="tab-content">
+				profile settings
+			</div>
+
+
 
 			<hr/>
 
 			<%= JSON.stringify(userData) %>
-			
+
 			game history
 
 			<hr/>
-			
+
 			<%= JSON.stringify(gameHistory) %>
-			
+
 		</div>
-		
+
 	</body>
 </html>
