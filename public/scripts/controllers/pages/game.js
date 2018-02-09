@@ -218,8 +218,9 @@ function GameController(globals) {
 		});
 
 		var profileLink = $("<a>", {
-			href: "/user/" + data.id,
-			target: "_blank",
+			class: "user-profile-modal-link",
+			"data-id": data.id,
+			href: "#",
 			title: "View user info"
 		});
 

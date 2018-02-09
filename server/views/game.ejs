@@ -5,7 +5,7 @@
 		<% include partials/stylesheets.ejs %>
 		<% include partials/scripts.ejs %>
 	</head>
-	<body class="game" data-controllers="Game">
+	<body class="game" data-controllers="Game Tabs UserProfileModal">
 		
 		<script type="text/javascript">
 			var myUser = <%- JSON.stringify(myUser) %>;
@@ -54,6 +54,9 @@
 					</div>
 				</div>
 			</div>
+			
+			<!-- user profile modal component -->
+			<% include components/user-profile-modal.ejs %>
 			
 		</div>
 

@@ -145,14 +145,10 @@ function LobbyController(globals) {
 			});
 
 			var profileButton = $("<a>", {
-				class: "user-info",
-				href: "/user/" + user.id,
-				target: "_blank",
-				title: "View user info",
-				click: function (e){
-					//prevent the parent click handler from firing also
-					e.stopPropagation();
-				}
+				class: "user-info user-profile-modal-link",
+				"data-id": user.id,
+				href: "#",
+				title: "View user info"
 			});
 
 			profileButton.append(profileIcon);
@@ -166,8 +162,14 @@ function LobbyController(globals) {
 	/**
 	 * Handler function that is called when a user is clicked
 	 * It sends a challenge to the selected user.
+	 * @param {Object} e
 	 */
-	function challengeUser() {
+	function challengeUser(e) {
+		
+		if ($(e.target).is(".user-info, .user-info *")) {
+			return;
+		}
+		
 		var userId = parseInt($(this).attr("id"));
 
 		//can't challenge your self and can't challenge users that aren't available
@@ -271,9 +273,10 @@ function LobbyController(globals) {
 				});
 				
 				var playerLink = $("<a>", {
-					href: "/user/" + player.id,
+					class: "user-profile-modal-link",
+					"data-id": player.id,
+					href: "#",
 					text: player.username,
-					target: "_blank",
 					title: "View user info"
 				});
 				

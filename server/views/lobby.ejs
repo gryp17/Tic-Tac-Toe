@@ -5,7 +5,7 @@
 		<% include partials/stylesheets.ejs %>
 		<% include partials/scripts.ejs %>
 	</head>
-	<body class="lobby" data-controllers="Lobby">
+	<body class="lobby" data-controllers="Lobby Tabs UserProfileModal">
 
 		<script type="text/javascript">
 			var myUser = <%- JSON.stringify(myUser) %>;
@@ -21,7 +21,7 @@
 
 					Logged in as
 
-					<a class="profile-link" href="/user/<%= myUser.id %>" target="_blank">
+					<a class="profile-link user-profile-modal-link" data-id="<%= myUser.id %>" href="#">
 						<%= myUser.username %>
 					</a>
 
@@ -104,6 +104,9 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- user profile modal component -->
+		<% include components/user-profile-modal.ejs %>
 		
 	</body>
 </html>

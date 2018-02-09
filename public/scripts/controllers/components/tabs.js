@@ -1,7 +1,7 @@
 function TabsController() {
 
 	//tabs view behaviour
-	$(".tab-button").click(function () {
+	$("body").on("click", ".tab-button", function (){
 		$(".tab-button").removeClass("active");
 		$(this).addClass("active");
 

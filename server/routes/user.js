@@ -8,7 +8,7 @@ var GameModel = require("../models/game");
 var middleware = require("../middleware");
 
 /**
- * User profile route
+ * User profile ajax route
  */
 router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
 	var userModel = new UserModel();
@@ -21,10 +21,7 @@ router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
 		}
 		
 		if(!userData){
-			res.render("error", {
-				title: "User not found",
-				message: "The user profile couldn't be found."
-			});
+			res.send("User not found.");
 		}else{
 			
 			//get the user game history
@@ -34,9 +31,8 @@ router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
 				}
 				
 				delete userData.password;
-								
-				res.render("user", {
-					myUser: req.session.user,
+				
+				res.send({
 					userData: userData,
 					gameHistory: gameHistory
 				});

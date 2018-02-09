@@ -7,6 +7,7 @@ body{
 	background: url("/img/pattern.png");
 	
 	@import "components/_tabs";
+	@import "components/_user-profile-modal";
 	
 	&.index{
 		@import "pages/_index";
@@ -20,7 +21,4 @@ body{
 		@import "pages/_game";
 	}
 	
-	&.user{
-		@import "pages/_user";
-	}
 }
