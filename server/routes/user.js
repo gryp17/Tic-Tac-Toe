@@ -13,7 +13,7 @@ var middleware = require("../middleware");
 router.get("/:id", middleware.isLoggedIn, function (req, res, next) {
 	var userModel = new UserModel();
 	var gameModel = new GameModel();
-	
+		
 	//find the user that matches this id
 	userModel.findById(req.params.id, function (err, userData){
 		if(err){

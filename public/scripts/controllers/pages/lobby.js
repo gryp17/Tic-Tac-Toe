@@ -256,27 +256,35 @@ function LobbyController(globals) {
 
 			var item = $("<div>", {
 				class: "alert alert-info",
-				text: " vs ",
-				title: game.players[0].username+" VS "+game.players[1].username
+				title: game.players[0].username+" vs "+game.players[1].username
 			});
 			
-			var challenger = $("<a>", {
-				href: "/user/" + game.players[0].id,
-				text: game.players[0].username,
-				target: "_blank",
-				title: "View user info"
+			var vs = $("<span>", {
+				class: "vs",
+				text: "vs"
 			});
 			
-			var challenged = $("<a>", {
-				href: "/user/" + game.players[1].id,
-				text: game.players[1].username,
-				target: "_blank",
-				title: "View user info"
+			game.players.forEach(function (player, index){
+				var avatar = $("<img>", {
+					class: "avatar",
+					src: "/upload/avatars/" + player.avatar
+				});
+				
+				var playerLink = $("<a>", {
+					href: "/user/" + player.id,
+					text: player.username,
+					target: "_blank",
+					title: "View user info"
+				});
+				
+				item.append(avatar);
+				item.append(playerLink);
+				
+				if(index === 0){
+					item.append(vs);
+				}
 			});
-
-			item.prepend(challenger);
-			item.append(challenged);
-
+			
 			$("#games-list").append(item);
 		});
 
@@ -285,6 +293,13 @@ function LobbyController(globals) {
 	//start game event
 	socket.on("startGame", function (){		
 		window.open("/game", "_self");
+	});
+	
+	//kick user event
+	socket.on("kickUser", function (userId){
+		if(userId === myUser.id){
+			window.open("/", "_self");
+		}
 	});
 
 }

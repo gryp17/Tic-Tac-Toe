@@ -45,7 +45,11 @@ router.post("/login", function (req, res, next) {
  * Logout
  */
 router.get("/logout", function (req, res, next) {
+	var lobbyNamespace = req.app.get("socketNamespaces").lobby;
+	var userId = req.session.user.id;
+	
 	req.session.destroy(function () {
+		lobbyNamespace.kickUser(userId);
 		res.redirect("/");
 	});
 });

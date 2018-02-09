@@ -125,6 +125,15 @@ module.exports = function (io, app) {
 	});
 
 	/**
+	 * Kicks the user from the lobby
+	 * Usually used when the user has logged out from another browser tab
+	 * @param {Number} userId
+	 */
+	lobby.kickUser = function (userId){
+		lobby.emit("kickUser", userId);
+	};
+
+	/**
 	 * Helper function that returns an array of all connected users
 	 * @returns {Array}
 	 */

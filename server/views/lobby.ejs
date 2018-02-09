@@ -14,7 +14,30 @@
 		<div class="container">
 
 			<!-- header -->
-			<% include partials/header.ejs %>
+			<div class="page-header row">
+
+				<div class="col-xs-12 col-sm-9">
+					<img class="avatar-preview" src="/upload/avatars/<%= myUser.avatar %>"/>
+
+					Logged in as
+
+					<a class="profile-link" href="/user/<%= myUser.id %>" target="_blank">
+						<%= myUser.username %>
+					</a>
+
+					<form id="update-avatar-form" enctype="multipart/form-data">
+						<input class="avatar" name="avatar" type="file"/>
+					</form>
+				</div>
+
+				<div class="col-xs-12 col-sm-3">
+					<a class="btn btn-danger logout-btn" href="/logout">
+						<span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+						Logout
+					</a>
+				</div>
+
+			</div>
 			
 			<!-- lobby chat -->
 			<div id="chat" class="well">
@@ -33,13 +56,17 @@
 			<div class="row">
 				<!-- connected users -->
 				<div class="col-xs-12 col-sm-6 col-lg-4">
-					Connected users: 
+					<div class="row-title">
+						Connected users: 
+					</div>
 					<div id="users-list">
 					</div>
 				</div>
 				<!-- games list -->
 				<div class="col-xs-12 col-sm-6 col-lg-offset-4 col-lg-4">
-					games list:
+					<div class="row-title">
+						Active games:
+					</div>
 					<div id="games-list">
 					</div>
 				</div>
