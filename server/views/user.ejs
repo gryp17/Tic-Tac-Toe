@@ -16,54 +16,38 @@
 			<!-- header -->
 			<% include partials/header.ejs %>
 
-
 			<!-- tab buttons -->
 			<div class="row no-pad">
-				<div class="tab-button col-xs-3 active" data-target="game-history">
+				<div class="tab-button col-xs-6 col-sm-2 active" data-target="game-history">
 					Game History
 				</div>
-				<div class="tab-button col-xs-3" data-target="profile-settings">
+				<div class="tab-button col-xs-6 col-sm-2" data-target="profile-settings">
 					Profile Settings
 				</div>
 			</div>
 
-			<!--
-			<div class="row">
-				<div class="col-xs-3">
-					<div class="tab-button active" data-target="game-history">
-						Game History
-					</div>
-				</div>
-				<div class="col-xs-3">
-					<div class="tab-button" data-target="profile-settings">
-						Profile Settings
-					</div>
-				</div>
-			</div>
-			-->
-
 			<!-- game history content -->
 			<div id="game-history" class="tab-content active">
 				game history
+				
+				<%= JSON.stringify(gameHistory) %>
 			</div>
 
 			<!-- profile settings content -->
 			<div id="profile-settings" class="tab-content">
 				profile settings
+				
+				<%= JSON.stringify(userData) %>
 			</div>
 
+			<hr/>			
 
-
-			<hr/>
-
-			<%= JSON.stringify(userData) %>
-
-			game history
-
-			<hr/>
-
-			<%= JSON.stringify(gameHistory) %>
-
+			<div class="clearfix"></div>
+			
+			<a class="btn btn-primary lobby-btn" href="/lobby">
+				Go to lobby
+			</a>
+			
 		</div>
 
 	</body>
