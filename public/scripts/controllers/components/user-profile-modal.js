@@ -47,6 +47,8 @@ function UserProfileModalController(globals) {
 			console.log(result);
 			
 			generateTabsButtons(userId);
+			generateWTL(result.gameHistory);
+			generateGameHistory(result.gameHistory);
 		
 			modal.modal("show");
 		});
@@ -91,19 +93,26 @@ function UserProfileModalController(globals) {
 		});
 	}
 	
-
+	/**
+	 * Generates the game history list
+	 * @param {Array} gameHistory
+	 */
+	function generateGameHistory(gameHistory) {
+		
+	}
+	
 	/**
 	 * Counts the number of win, tie or lose games in the game history
-	 * @param {type} gameHistory
-	 * @returns {UserProfileModalController.calculateWTL.WTL}
+	 * @param {Array} gameHistory
 	 */
-	function calculateWTL(gameHistory) {
+	function generateWTL(gameHistory) {
 		var WTL = {
 			win: 0,
 			tie: 0,
 			lose: 0
 		};
 
+		//count the number of win, tie or lose games
 		gameHistory.forEach(function (game) {
 			if (!game.winner) {
 				WTL.tie++;
@@ -113,8 +122,22 @@ function UserProfileModalController(globals) {
 				WTL.lose++;
 			}
 		});
+		
+		//generate the html
+		var tbody = modal.find(".wtl tbody");
+		tbody.empty();
+		
+		var tr = $("<tr>");
+		
+		Object.values(WTL).forEach(function (count){			
+			var td = $("<td>", {
+				text: count 
+			});
+			tr.append(td);
+		});
+				
+		tbody.append(tr);
 
-		return WTL;
 	}
 		
 }
