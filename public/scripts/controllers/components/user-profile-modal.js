@@ -1,6 +1,6 @@
 function UserProfileModalController(globals) {
 	var myUser = globals.myUser;
-	var modal = $("#user-profile-modal");
+	var modal;
 		
 	//list of tabs that will be displayed in the modal
 	var tabs = [
@@ -18,6 +18,16 @@ function UserProfileModalController(globals) {
 		}
 	];
 	
+	//load the component template and append it to the body
+	$.ajax({
+		url: "/template/user-profile-modal",
+		type: "GET"
+	}).done(function (template) {
+		$("body").append(template);
+		
+		modal = $("#user-profile-modal");
+	});
+	
 	//profile link click handler
 	$("body").on("click", ".user-profile-modal-link", function (e){
 		e.preventDefault();
@@ -33,10 +43,7 @@ function UserProfileModalController(globals) {
 				toastr.error(result);
 				return;
 			}
-			
-			//TODO:
-			//load the modal HTML using ajax and append it to the body
-			
+						
 			console.log(result);
 			
 			generateTabsButtons(userId);

@@ -6,7 +6,13 @@ $(document).ready(function (){
 	];
 	
 	//call the correct controller(s) depending on the data-controllers attribute
-	var controllers = $("body").attr("data-controllers").split(" ");
+	var controllers = $("body").attr("data-controllers");
+	
+	if(controllers){
+		controllers = controllers.split(" ");
+	}else{
+		controllers = [];
+	}
 
 	controllers = commonControllers.concat(controllers);
 	
