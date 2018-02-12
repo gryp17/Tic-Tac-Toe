@@ -48,6 +48,9 @@ function UserProfileModalController(globals) {
 			
 			generateTabsButtons(userId);
 			generateWTL(result.gameHistory);
+			
+			//TODO:
+			//should probably add pagination
 			generateGameHistory(result.gameHistory);
 		
 			modal.modal("show");

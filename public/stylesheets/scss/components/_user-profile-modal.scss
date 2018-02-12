@@ -3,7 +3,9 @@
 	.modal-body{
 	
 		#game-history{
+			
 			.wtl{
+				margin-top: 25px;
 				width: 100%;
 				text-align: center;
 				
@@ -25,7 +27,10 @@
 						color: $red;
 					}
 				}
-				
+			}
+			
+			.games-list{
+				margin-top: 25px;
 			}
 		}
 		
