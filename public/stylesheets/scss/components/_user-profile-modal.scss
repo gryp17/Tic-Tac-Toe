@@ -12,6 +12,10 @@
 				thead{
 					font-weight: bold;
 					border-bottom: 1px solid #dddddd;
+					
+					td{
+						width: 33%;
+					}
 				}
 				
 				td{
@@ -31,9 +35,45 @@
 			
 			.games-list{
 				margin-top: 25px;
+				
+				.panel{
+					.panel-heading{
+						font-weight: bold;
+						
+						.date{
+							float: right;
+							font-weight: normal;
+						}
+					}
+					
+					.panel-body{
+						
+						.player{
+							text-align: center;
+							font-weight: bold;
+							
+							.avatar{
+								width: 100px;
+								height: 100px;
+								border-radius: 100%;
+							}
+						}
+						
+						#game-result-map{
+							margin: auto;
+							
+							@media (max-width: 768px){
+								margin-top: 15px;
+								
+								@media (min-width: 320px){
+									width: 40%;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
-		
 	}
 	
 	.modal-footer{
