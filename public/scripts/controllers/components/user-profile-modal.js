@@ -49,9 +49,8 @@ function UserProfileModalController(globals) {
 			generateTabsButtons(userId);
 			generateWTL(result.gameHistory);
 			
-			//TODO:
-			//should probably add pagination
-			generateGameHistory(result.gameHistory);
+			//generate the game history
+			generateGameHistory(userId, result.gameHistory);
 		
 			modal.modal("show");
 		});
@@ -98,10 +97,197 @@ function UserProfileModalController(globals) {
 	
 	/**
 	 * Generates the game history list
+	 * @param {Number} userId
 	 * @param {Array} gameHistory
 	 */
-	function generateGameHistory(gameHistory) {
+	function generateGameHistory(userId, gameHistory) {
+		var gamesList = modal.find(".games-list");
 		
+		gamesList.empty();
+		gameHistory.forEach(function (data){
+			var panelClass;
+			var panelTitle;
+			
+			//get the correct panel class and title depending on the game winner
+			if(!data.winner){
+				panelClass = "panel-info";
+				panelTitle = "Tie";
+			}else if(data.winner === userId){
+				panelClass = "panel-success";
+				panelTitle = "Win";
+			}else {
+				panelClass = "panel-danger";
+				panelTitle = "Loss";
+			}
+			
+			//add the "AFK" label if the entire map is empty
+			if(mapIsEmpty(data.map)){
+				panelTitle = panelTitle + " (AFK)";
+			}
+			
+			var panel = $("<div>", {
+				class: "panel "+panelClass
+			});
+			
+			var header = $("<div>", {
+				class: "panel-heading",
+				text: panelTitle
+			});
+			
+			var date = $("<span>", {
+				class: "date",
+				text: moment(data.finished).format("YYYY-MM-DD HH:mm:ss")
+			});
+			
+			//get the panel body
+			var body = generatePanelBody(userId, data);
+			
+			header.append(date);
+			panel.append(header);
+			panel.append(body);
+			
+			gamesList.append(panel);
+		});
+		
+	}
+	
+	/**
+	 * Checks if the entire map is empty (contains only 0s)
+	 * @param {Array} map
+	 * @returns {Boolean}
+	 */
+	function mapIsEmpty(map){
+		var empty = true;
+		
+		outerLoop:
+		for(var i = 0; i < map.length; i++){
+			for(var j = 0; j < map[i].length; j++){
+				if(map[i][j] !== 0){
+					empty = false;
+					break outerLoop;
+				}
+			}
+		}
+		
+		return empty;
+	}
+	
+	/**
+	 * Generates the game panel body HTML structure
+	 * @param {Number} userId
+	 * @param {Object} data
+	 * @returns {Object}
+	 */
+	function generatePanelBody(userId, data) {
+		var body = $("<div>", {
+			class: "panel-body"
+		});
+		
+		var row = $("<div>", {
+			class: "row"
+		});
+		
+		//get the winner and loser objects
+		var currentUser = _.find(data.players, {id: userId});
+		var opponent = _.find(data.players, function (player){
+			return player.id !== userId;
+		});
+		
+		//in first place always put the current user
+		[currentUser, opponent].forEach(function (playerData, index){
+			var playerClass;
+			
+			//apply different bootstrap classes to each player
+			if(index === 0){
+				playerClass = "col-xs-6 col-sm-3";
+			}else{
+				playerClass = "col-xs-6 col-sm-push-6 col-sm-3";
+			}
+			
+			var player = $("<div>", {
+				class: "player "+playerClass
+			});
+			
+			var avatar = $("<img>", {
+				class: "avatar",
+				src: "/upload/avatars/"+playerData.avatar
+			});
+			
+			player.append(avatar);
+			player.append(playerData.username);
+			
+			row.append(player);
+		});
+		
+		//get the game result map/table
+		var gameResultMap = generateGameResultMap(userId, data);
+		
+		row.append(gameResultMap);
+		
+		body.append(row);
+		
+		return body;
+	}
+	
+	/**
+	 * Generates the game result map with the provided game data
+	 * @param {Number} userId
+	 * @param {Object} data
+	 * @returns {Object}
+	 */
+	function generateGameResultMap(userId, data){
+		var wrapper = $("<div>", {
+			class: "col-xs-12 col-sm-pull-3 col-sm-6"
+		});
+		
+		var table = $("<table>", {
+			id: "game-result-map",
+			class: "table table-bordered"
+		});
+		
+		//generate the table rows
+		data.map.forEach(function (row, rowIndex) {
+			var tr = $("<tr>");
+
+			row.forEach(function (value, colIndex) {
+				var td = $("<td>");
+
+				//get the correct image
+				var img = mapCellValue(userId, value);
+
+				td.append(img);
+				tr.append(td);
+			});
+
+			table.append(tr);
+		});
+		
+		wrapper.append(table);
+		
+		return wrapper;
+	}
+	
+	/**
+	 * Maps the gameMap value to the correct image
+	 * @param {Number} userId
+	 * @param {Number} value
+	 * @returns {Object}
+	 */
+	function mapCellValue(userId, value) {
+		var icon;
+
+		if (value === userId) {
+			icon = "icon-x.png";
+		} else if (value === 0) {
+			icon = "icon-transparent.png";
+		} else {
+			icon = "icon-o.png";
+		}
+
+		return $("<img>", {
+			class: "img-responsive",
+			src: "/img/" + icon
+		});
 	}
 	
 	/**

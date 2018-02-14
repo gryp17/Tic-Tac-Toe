@@ -28,7 +28,7 @@ module.exports = function () {
 					+"WHERE game.id = player.gameId "
 					+"AND player.userId = user.id "
 					+"AND gameId IN (select gameId from player where player.userId = ?) "
-					+"ORDER BY finished DESC ";
+					+"ORDER BY finished DESC";
 		
 		connection.query(query, [userId], function (err, records){
 			if(err){
@@ -40,6 +40,9 @@ module.exports = function () {
 			//loop thru all the results and merge them (there are 2 results per game - one for each player)
 			records.forEach(function (record){
 				if(!historyMap[record.gameId]){
+					//parse the game map
+					record.map = JSON.parse(record.map);
+					
 					historyMap[record.gameId] = record;
 					historyMap[record.gameId].players = [];
 				}
@@ -57,9 +60,9 @@ module.exports = function () {
 				delete historyMap[record.gameId].avatar;
 				
 			});
-			
-			//convert the object into array and return it
-			done(null, _.values(historyMap));
+						
+			//convert the object into array and return it (also order by date because we have lost the order in the historyMap object...)
+			done(null, _.orderBy(_.values(historyMap), ["finished"], ["desc"]));
 		});
 	};	
 };
