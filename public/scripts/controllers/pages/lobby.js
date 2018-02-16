@@ -3,6 +3,9 @@ function LobbyController(globals) {
 	
 	var challengeTimeout = 20; //seconds
 	var challengeCounterInterval;
+	
+	var chatMessageNotification = new Audio("/audio/message.mp3");
+	var challengeReceivedNotification = new Audio("/audio/challenge.mp3");
 
 	var statusMap = {
 		"available": "alert alert-success",
@@ -111,6 +114,9 @@ function LobbyController(globals) {
 
 		//append the entire message element to the DOM
 		$("#chat .chat-body").append(message);
+		
+		//play the chat message notification sound
+		chatMessageNotification.play();
 
 		//scroll to the bottom of the chat-body (in case there is a scroll)
 		var height = $("#chat .chat-body")[0].scrollHeight;
@@ -200,6 +206,9 @@ function LobbyController(globals) {
 
 	//challenge handler
 	socket.on("challenge", function (challenger) {
+		
+		//play the challenge notification sound
+		challengeReceivedNotification.play();
 
 		$("#challenge-modal .counter").html(challengeTimeout);
 
