@@ -4,7 +4,8 @@ CREATE TABLE `user` (
 	`username` varchar(20) NOT NULL,
 	`password` varchar(40) NOT NULL,
 	`avatar` varchar(80) DEFAULT NULL,
-	`created` datetime NOT NULL
+	`created` datetime NOT NULL,
+	`sound` tinyint(4) DEFAULT '1'
 );
 
 CREATE TABLE `game` (

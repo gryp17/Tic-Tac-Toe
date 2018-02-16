@@ -5,7 +5,8 @@ function GameController(globals) {
 	var playerTurnCounterInterval;
 	var gameOverRedirectDelay = 5; //seconds
 	
-	var chatMessageNotification = new Audio("/audio/message.mp3");
+	//initialize the AudioService
+	var notifications = new AudioService(myUser);
 
 	var socket = io("/game");
 
@@ -79,7 +80,7 @@ function GameController(globals) {
 		$("#chat .chat-body").append(message);
 
 		//play the chat message notification sound
-		chatMessageNotification.play();
+		notifications.play("message");
 
 		//scroll to the bottom of the chat-body (in case there is a scroll)
 		var height = $("#chat .chat-body")[0].scrollHeight;
