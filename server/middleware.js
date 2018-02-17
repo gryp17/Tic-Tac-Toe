@@ -104,6 +104,42 @@ module.exports = {
 
 	},
 	/**
+	 * Checks if the new password is valid and if the old password is correct for that user
+	 * @param {Object} req
+	 * @param {Object} res
+	 * @param {Function} next
+	 */
+	checkPasswords: function (req, res, next){
+		var userModel = new UserModel();
+		var data = req.body;
+		
+		if(!data.currentPassword){
+			return res.send("Current Password is required");
+		}
+		
+		//get the user data and check if the provided password is correct
+		userModel.findById(req.session.user.id, function (err, user){
+			if(err){
+				return next(err);
+			}
+			
+			if(md5(data.currentPassword) !== user.password){
+				return res.send("Wrong password");
+			}
+			
+			if (!data.newPassword || data.newPassword.trim() === "") {
+				return res.send("New Password is required");
+			}
+
+			if (data.newPassword !== data.repeatNewPassword) {
+				return res.send("The passwords don't match");
+			}
+			
+			next();
+		});
+		
+	},
+	/**
 	 * Checks if the submited file is valid and uploads it to the avatars directory
 	 * It modifies the req object adding the new avatar filename in req.files.avatar.uploadedTo
 	 * @param {Object} req

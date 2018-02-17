@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var _ = require("lodash");
 var multipart = require("connect-multiparty");
+var md5 = require("md5");
 
 var UserModel = require("../models/user");
 var GameModel = require("../models/game");
@@ -84,6 +85,25 @@ router.post("/updateAvatar", middleware.isLoggedIn, multipart(), function (req, 
 
 	});
 
+});
+
+/**
+ * Change password
+ */
+router.post("/changePassword", middleware.isLoggedIn, middleware.checkPasswords, function (req, res, next) {
+	var userModel = new UserModel();
+	var data = req.body;
+		
+	//update the user password
+	userModel.update(req.session.user.id, {password: md5(data.newPassword.trim())}, function (err, result){
+		if(err){
+			return res.send("Failed to change the password");
+		}
+		
+		res.send({
+			user: req.session.user
+		});
+	});
 });
 
 module.exports = router;

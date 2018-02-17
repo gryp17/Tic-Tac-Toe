@@ -26,36 +26,78 @@ function UserProfileModalController(globals) {
 		$("body").append(template);
 		
 		modal = $("#user-profile-modal");
+		
+		//change password click handler
+		modal.on("click", "#profile-settings-form button", function (){
+			changePassword();
+		});
+
+		//password input enter handler
+		modal.on("keypress", "#profile-settings-form input[type=password]", function (e){
+			if (e.which === 13) {
+				changePassword();
+			}
+		});
+		
+		//profile link click handler
+		$("body").on("click", ".user-profile-modal-link", showUserProfileModal);
 	});
 	
-	//profile link click handler
-	$("body").on("click", ".user-profile-modal-link", function (e){
+	/**
+	 * Gets the user info and shows the user profile modal
+	 * @param {Object} e
+	 */
+	function showUserProfileModal(e) {
 		e.preventDefault();
-		
+
 		var userId = parseInt($(this).attr("data-id"));
-		
+
 		//get the user info
 		$.ajax({
-			url: "/user/"+userId,
+			url: "/user/" + userId,
 			type: "GET"
 		}).done(function (result) {
 			if (!result.userData) {
 				toastr.error(result);
 				return;
 			}
-						
-			console.log(result);
-			
+
 			generateTabsButtons(userId);
 			generateWTL(result.gameHistory);
-			
+
 			//generate the game history
 			generateGameHistory(userId, result.gameHistory);
-		
+
+			//clear the password fields
+			clearProfileSettings();
+
 			modal.modal("show");
 		});
+	}
+	
+	/**
+	 * Resets all the password inputs in the profile settings
+	 */
+	function clearProfileSettings(){
+		modal.find("#profile-settings-form input[type=password]").val("");
+	}
 		
-	});
+	/**
+	 * Changes the current user password
+	 */
+	function changePassword(){
+		$.ajax({
+			url: "/user/changePassword",
+			type: "POST",
+			data: $("#profile-settings-form").serialize()
+		}).done(function (result) {
+			if (result.user) {
+				modal.modal("hide");
+			} else {
+				toastr.error(result);
+			}
+		});
+	}
 	
 	/**
 	 * Generates the tabs buttons depending on the opened user id
@@ -64,6 +106,9 @@ function UserProfileModalController(globals) {
 	function generateTabsButtons(userId){
 		var tabsWrapper = modal.find(".tabs-wrapper");
 		var visibleTabs = [];
+		
+		//remove the active class from all tab contents
+		modal.find(".tab-content").removeClass("active");
 		
 		//show only the public tabs for the rest of the users
 		if(userId !== myUser.id){
@@ -80,9 +125,10 @@ function UserProfileModalController(globals) {
 			//add the correct bootstrap column size
 			data.classes.push("col-xs-"+(12 / visibleTabs.length));
 
-			//add the "active" class to the first tab
+			//add the "active" class to the first tab and to the first tab content
 			if(index === 0){
 				data.classes.push("active");
+				modal.find(".tab-content").first().addClass("active");
 			}
 		    			
 			var tab = $("<div>", {
@@ -326,7 +372,6 @@ function UserProfileModalController(globals) {
 		});
 				
 		tbody.append(tr);
-
 	}
 		
 }

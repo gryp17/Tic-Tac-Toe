@@ -47,6 +47,11 @@ module.exports = function () {
 					historyMap[record.gameId].players = [];
 				}
 				
+				//if there is no avatar set - use the default one
+				if(!record.avatar){
+					record.avatar = app.get("config").uploads.defaultAvatar;
+				}
+				
 				//fill the "players" array
 				historyMap[record.gameId].players.push({
 					id: record.userId,

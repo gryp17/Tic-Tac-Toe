@@ -7,7 +7,7 @@
 				<div class="tabs-wrapper row no-pad"></div>
 
 				<!-- game history content -->
-				<div id="game-history" class="tab-content active">
+				<div id="game-history" class="tab-content">
 
 					<!-- WTL table -->
 					<table class="wtl">
@@ -29,12 +29,32 @@
 
 				<!-- profile settings content -->
 				<div id="profile-settings" class="tab-content">
-					profile settings
+					
+					<form id="profile-settings-form">
+						<h4>Change Password</h4>
+						
+						<div class="form-group">
+							<label class="label">Current Password</label>
+							<input type="password" class="form-control" name="currentPassword" placeholder="Current Password"/>
+						</div>
+						
+						<div class="form-group">
+							<label class="label">New Password</label>
+							<input type="password" class="form-control" name="newPassword" placeholder="New Password"/>
+						</div>
+
+						<div class="form-group">
+							<label class="label">Repeat New Password</label>
+							<input type="password" class="form-control" name="repeatNewPassword" placeholder="Repeat New Password"/>
+						</div>
+
+						<button type="button" class="btn btn-success">
+							Change Password
+						</button>
+					</form>
+
 				</div>
 
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>

@@ -74,9 +74,17 @@
 				}
 			}
 		}
+		
+		#profile-settings{
+			#profile-settings-form{
+				margin-top: 25px;
+				
+				button{
+					display: block;
+					margin: auto;
+				}
+			}
+		}
 	}
 	
-	.modal-footer{
-		text-align: center;
-	}
 }
