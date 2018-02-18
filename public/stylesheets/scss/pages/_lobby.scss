@@ -21,6 +21,35 @@
 	.profile-link{
 		font-weight: bold;
 	}
+	
+	.toggle-sound-btn{
+		width: 35px;
+		height: 35px;
+		border-radius: 100%;
+		
+		&:focus{
+			outline: none;
+		}
+		
+		.glyphicon{
+			margin-left: -4px;
+			font-size: 20px;
+		}
+		
+		.glyphicon-volume-up{
+			display: none;
+		}
+		
+		&.on{
+			.glyphicon-volume-off{
+				display: none;
+			}
+			
+			.glyphicon-volume-up{
+				display: inline-block;
+			}
+		}
+	}
 
 	@media (min-width: 768px){
 		.logout-btn{

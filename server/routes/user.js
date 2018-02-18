@@ -106,4 +106,26 @@ router.post("/changePassword", middleware.isLoggedIn, middleware.checkPasswords,
 	});
 });
 
+/**
+ * Enable/Disable sound
+ */
+router.post("/toggleSound", middleware.isLoggedIn, function (req, res, next){
+	var userModel = new UserModel();
+	var data = req.body;
+	
+	//update the user sound settings
+	userModel.update(req.session.user.id, {sound: parseInt(data.sound)}, function (err, result){
+		if(err){
+			return res.send("Failed to update the sound status");
+		}
+		
+		//update the session variable
+		req.session.user.sound = parseInt(data.sound);
+		
+		res.send({
+			user: req.session.user
+		});
+	});
+});
+
 module.exports = router;

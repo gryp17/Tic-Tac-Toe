@@ -14,6 +14,11 @@ function LobbyController(globals) {
 
 	var socket = io("/lobby");
 
+	//set the sound status
+	if(myUser.sound === 1){
+		$(".toggle-sound-btn").addClass("on");
+	}
+
 	//redirect the avatar-preview click to the actual file input
 	$(".avatar-preview").click(function () {
 		$("#update-avatar-form .avatar").click();
@@ -44,7 +49,31 @@ function LobbyController(globals) {
 
 		});
 	});
-
+	
+	//toggle sound status
+	$(".toggle-sound-btn").click(function (){
+		var self = $(this);
+		
+		if($(this).hasClass("on")){
+			myUser.sound = 0;
+		}else{
+			myUser.sound = 1;
+		}
+		
+		$.ajax({
+			url: "/user/toggleSound",
+			type: "POST",
+			data: {
+				sound: myUser.sound
+			}
+		}).done(function (result) {
+			if (result.user) {
+				self.toggleClass("on");
+			} else {
+				toastr.error(result);
+			}
+		});
+	});
 
 	/**
 	 * Sends the lobby chat message

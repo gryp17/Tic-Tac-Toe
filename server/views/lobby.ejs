@@ -17,13 +17,18 @@
 			<div class="page-header row">
 
 				<div class="col-xs-12 col-sm-9">
-					<img class="avatar-preview" src="/upload/avatars/<%= myUser.avatar %>"/>
+					<img class="avatar-preview" src="/upload/avatars/<%= myUser.avatar %>" title="Change avatar"/>
 
 					Logged in as
 
 					<a class="profile-link user-profile-modal-link" data-id="<%= myUser.id %>" href="#">
 						<%= myUser.username %>
 					</a>
+					
+					<button class="btn btn-default toggle-sound-btn" title="Enable/Disable sound">
+						<i class="glyphicon glyphicon-volume-up"></i>
+						<i class="glyphicon glyphicon-volume-off"></i>
+					</button>
 
 					<form id="update-avatar-form" enctype="multipart/form-data">
 						<input class="avatar" name="avatar" type="file"/>
