@@ -8,7 +8,9 @@ function GameController(globals) {
 	//initialize the AudioService
 	var notifications = new AudioService(myUser);
 
-	var socket = io("/game");
+	//set the transports only to "websocket"
+	//this fixes a bug with socket.io that leaves inactive connections when you refresh the page many times
+	var socket = io("/game", {transports: ["websocket"], upgrade: false});
 
 	/**
 	 * Sends the game chat message

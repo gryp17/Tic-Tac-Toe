@@ -12,7 +12,9 @@ function LobbyController(globals) {
 		"busy": "alert alert-warning"
 	};
 
-	var socket = io("/lobby");
+	//set the transports only to "websocket"
+	//this fixes a bug with socket.io that leaves inactive connections when you refresh the page many times
+	var socket = io("/lobby", {transports: ["websocket"], upgrade: false});
 
 	//set the sound status
 	if(myUser.sound === 1){
