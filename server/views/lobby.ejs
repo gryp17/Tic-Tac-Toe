@@ -17,8 +17,14 @@
 			<div class="page-header row">
 
 				<div class="col-xs-12 col-sm-9">
-					<img class="avatar-preview" src="/upload/avatars/<%= myUser.avatar %>" title="Change avatar"/>
-
+					
+					<div class="avatar-preview-wrapper">
+						<img class="avatar-preview" src="/upload/avatars/<%= myUser.avatar %>" title="Change avatar"/>
+						<div class="avatar-mask">
+							<span class="glyphicon glyphicon-camera"></span>
+						</div>
+					</div>
+					
 					Logged in as
 
 					<a class="profile-link user-profile-modal-link" data-id="<%= myUser.id %>" href="#">

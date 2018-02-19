@@ -7,11 +7,41 @@
 		text-align: right;
 	}
 
-	.avatar-preview{
-		width: 70px;
-		height: 70px;
+	$avatarSize: 70px;
+	
+	.avatar-preview-wrapper{
+		position: relative;
+		display: inline-block;
+		overflow: hidden;
+		vertical-align: middle;
 		border-radius: 100%;
 		cursor: pointer;
+		
+		&:hover{
+			.avatar-mask{
+				height: $avatarSize;
+				padding-top: 25px;
+			}
+		}
+		
+		.avatar-mask{
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			margin: auto;
+			height: 25px;
+			text-align: center;
+			background-color: rgba(101,92,92,0.5);
+			transition: all 200ms ease-in;
+			font-size: 16px;
+			color: #ffffff;
+		}
+		
+		.avatar-preview{
+			width: $avatarSize;
+			height: $avatarSize;
+		}
 	}
 
 	#update-avatar-form{

@@ -20,7 +20,7 @@ function LobbyController(globals) {
 	}
 
 	//redirect the avatar-preview click to the actual file input
-	$(".avatar-preview").click(function () {
+	$(".avatar-preview-wrapper").click(function () {
 		$("#update-avatar-form .avatar").click();
 	});
 
