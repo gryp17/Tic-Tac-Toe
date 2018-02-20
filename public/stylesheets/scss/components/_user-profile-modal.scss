@@ -1,90 +1,91 @@
+#user-profile-modal{
+	.modal-dialog{
+		.modal-body{
 
-.modal-dialog{
-	.modal-body{
-	
-		#game-history{
-			
-			.wtl{
-				margin-top: 25px;
-				width: 100%;
-				text-align: center;
-				
-				thead{
-					font-weight: bold;
-					border-bottom: 1px solid #dddddd;
-					
-					td{
-						width: 33%;
-					}
-				}
-				
-				td{
-					&:nth-child(1){
-						color: $green;
-					}
-					
-					&:nth-child(2){
-						color: $blue;
-					}
-					
-					&:nth-child(3){
-						color: $red;
-					}
-				}
-			}
-			
-			.games-list{
-				margin-top: 25px;
-				
-				.panel{
-					.panel-heading{
+			#game-history{
+
+				.wtl{
+					margin-top: 25px;
+					width: 100%;
+					text-align: center;
+
+					thead{
 						font-weight: bold;
-						
-						.date{
-							float: right;
-							font-weight: normal;
+						border-bottom: 1px solid #dddddd;
+
+						td{
+							width: 33%;
 						}
 					}
-					
-					.panel-body{
-						
-						.player{
-							text-align: center;
+
+					td{
+						&:nth-child(1){
+							color: $green;
+						}
+
+						&:nth-child(2){
+							color: $blue;
+						}
+
+						&:nth-child(3){
+							color: $red;
+						}
+					}
+				}
+
+				.games-list{
+					margin-top: 25px;
+
+					.panel{
+						.panel-heading{
 							font-weight: bold;
-							
-							.avatar{
-								width: 100px;
-								height: 100px;
-								border-radius: 100%;
+
+							.date{
+								float: right;
+								font-weight: normal;
 							}
 						}
-						
-						#game-result-map{
-							margin: auto;
-							
-							@media (max-width: 768px){
-								margin-top: 15px;
-								
-								@media (min-width: 320px){
-									width: 40%;
+
+						.panel-body{
+
+							.player{
+								text-align: center;
+								font-weight: bold;
+
+								.avatar{
+									width: 100px;
+									height: 100px;
+									border-radius: 100%;
+								}
+							}
+
+							#game-result-map{
+								margin: auto;
+
+								@media (max-width: 768px){
+									margin-top: 15px;
+
+									@media (min-width: 320px){
+										width: 40%;
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-		
-		#profile-settings{
-			#profile-settings-form{
-				margin-top: 25px;
-				
-				button{
-					display: block;
-					margin: auto;
+
+			#profile-settings{
+				#profile-settings-form{
+					margin-top: 25px;
+
+					button{
+						display: block;
+						margin: auto;
+					}
 				}
 			}
 		}
 	}
-	
 }
+

@@ -1,5 +1,5 @@
 @import "_bootstrap";
-@import "utils/_variables";
+@import "utils/_colors";
 @import "utils/_common";
 @import "utils/_animations";
 
@@ -19,6 +19,10 @@ body{
 	
 	&.game{
 		@import "pages/_game";
+	}
+	
+	&.error{
+		@import "pages/_error";
 	}
 	
 }

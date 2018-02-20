@@ -86,7 +86,7 @@ module.exports = function () {
 	};
 	
 	/**
-	 * Updated any of the user attributes
+	 * Updates any of the user attributes
 	 * @param {Number} id
 	 * @param {Object} data
 	 * @param {Function} done
