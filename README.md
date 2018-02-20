@@ -8,6 +8,7 @@ Some of the game's features include:
 - Game lobby with a global chat and a list of available players and active games.
 - User profile and game history (with all player's moves) for each player.
 - Ingame chat for the two players.
+- Sound notifications on chat message and game request.
 
 ## Installation
 
