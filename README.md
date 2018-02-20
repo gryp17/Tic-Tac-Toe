@@ -1,7 +1,13 @@
 # Tic-Tac-Toe
-Basic NodeJS/Socket.IO game. 
-The backend is based on Express and MySQL while the front end uses mostly jQuery with some custom changes to the way it handles reusable components.
+NodeJS/Socket.IO implementation of the Tic-Tac-Toe game.
+The backend is based on Express and MySQL while the front end uses mostly jQuery with some changes to the way it handles reusable components.
 It uses [SASS](http://sass-lang.com) as css preprocessor, the dependencies are managed using [bower](https://bower.io) and the build process is done with [gulp](http://gulpjs.com).
+
+Some of the game's features include:
+- User signup
+- Game lobby with a global chat and a list of available players and active games.
+- User profile and game history (with all player's moves) for each player.
+- Ingame chat for the two players.
 
 ## Installation
 
