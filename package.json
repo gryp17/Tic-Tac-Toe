@@ -43,7 +43,7 @@
 		"md5": "^2.2.1",
 		"memory-cache": "^0.1.6",
 		"moment": "^2.18.1",
-		"morgan": "~1.8.1",
+		"morgan": "~1.9.1",
 		"mysql": "^2.13.0",
 		"nodemon": "^1.11.0",
 		"serve-favicon": "~2.4.2",
