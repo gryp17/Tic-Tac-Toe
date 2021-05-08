@@ -1,23 +1,23 @@
-var express = require("express");
+var express = require('express');
 var router = express.Router();
-var md5 = require("md5");
-var multipart = require("connect-multiparty");
+var md5 = require('md5');
+var multipart = require('connect-multiparty');
 
-var middleware = require("../middleware");
+var middleware = require('../middleware');
 
-var UserModel = require("../models/user");
+var UserModel = require('../models/user');
 
 /**
  * Home page
  */
-router.get("/", function (req, res, next) {
-	res.render("index");
+router.get('/', function (req, res, next) {
+	res.render('index');
 });
 
 /**
  * Ajax login
  */
-router.post("/login", function (req, res, next) {
+router.post('/login', function (req, res, next) {
 	var userModel = new UserModel();
 
 	userModel.findByUsername(req.body.username, function (err, result) {
@@ -28,7 +28,7 @@ router.post("/login", function (req, res, next) {
 		if (result) {
 
 			if (result.password !== md5(req.body.password)) {
-				res.send("Wrong username or password");
+				res.send('Wrong username or password');
 			} else {
 				delete result.password;
 				req.session.user = result;
@@ -36,7 +36,7 @@ router.post("/login", function (req, res, next) {
 			}
 
 		} else {
-			res.send("Wrong username or password");
+			res.send('Wrong username or password');
 		}
 	});
 });
@@ -44,13 +44,13 @@ router.post("/login", function (req, res, next) {
 /**
  * Logout
  */
-router.get("/logout", function (req, res, next) {
-	var lobbyNamespace = req.app.get("socketNamespaces").lobby;
+router.get('/logout', function (req, res, next) {
+	var lobbyNamespace = req.app.get('socketNamespaces').lobby;
 	var userId = req.session.user.id;
 	
 	req.session.destroy(function () {
 		lobbyNamespace.kickUser(userId);
-		res.redirect("/");
+		res.redirect('/');
 	});
 });
 
@@ -60,7 +60,7 @@ router.get("/logout", function (req, res, next) {
  * calls the checkSignupData in order to validate the username/password
  * finally calls the uploadAvatar middleware that uploads the avatar and saves the avatar filename in the req.files.avatar.uploadedTo field
  */
-router.post("/signup", multipart(), middleware.checkSignupData, middleware.uploadAvatar, function (req, res, next) {
+router.post('/signup', multipart(), middleware.checkSignupData, middleware.uploadAvatar, function (req, res, next) {
 	var userModel = new UserModel();
 
 	var data = req.body;

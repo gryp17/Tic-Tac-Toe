@@ -1,4 +1,7 @@
-function GameController(globals) {
+import io from 'socket.io-client';
+import moment from 'moment';
+
+export default function GameController(globals) {
 	var myUser = globals.myUser;
 	
 	var playerTurnTimeout = 15; //seconds
@@ -10,29 +13,29 @@ function GameController(globals) {
 
 	//set the transports only to "websocket"
 	//this fixes a bug with socket.io that leaves inactive connections when you refresh the page many times
-	var socket = io("/game", {transports: ["websocket"], upgrade: false});
+	var socket = io('/game', {transports: ['websocket'], upgrade: false});
 
 	/**
 	 * Sends the game chat message
 	 */
 	function sendChatMessage() {
-		var message = $("#chat input[type=text]").val();
+		var message = $('#chat input[type=text]').val();
 		message = message.trim();
 
-		$("#chat input[type=text]").val("");
+		$('#chat input[type=text]').val('');
 
 		if (message.length > 0) {
-			socket.emit("chatMessage", message);
+			socket.emit('chatMessage', message);
 		}
 	}
 
 	//send button handler
-	$("#chat button").click(function () {
+	$('#chat button').click(function () {
 		sendChatMessage();
 	});
 
 	//text input handler
-	$("#chat input[type=text]").keypress(function (e) {
+	$('#chat input[type=text]').keypress(function (e) {
 		if (e.which === 13) {
 			sendChatMessage();
 		}
@@ -40,107 +43,107 @@ function GameController(globals) {
 
 	//chat message handler
 	//it builds the necessary DOM elements and adds them to the chat container
-	socket.on("chatMessage", function (data) {
+	socket.on('chatMessage', function (data) {
 
 		//parse the date using momentjs
 		var date = moment(data.date);
 
 		//build the message element
-		var message = $("<div>", {
-			class: "message " + data.type //add the message type as class
+		var message = $('<div>', {
+			class: 'message ' + data.type //add the message type as class
 		});
 
 		//build the timestamp object
-		var timestamp = $("<span>", {
-			class: "timestamp",
-			title: date.format("YYYY-MM-DD HH:mm:ss"),
-			text: "[" + date.format("HH:mm:ss") + "]"
+		var timestamp = $('<span>', {
+			class: 'timestamp',
+			title: date.format('YYYY-MM-DD HH:mm:ss'),
+			text: '[' + date.format('HH:mm:ss') + ']'
 		});
 
 		message.append(timestamp);
 
 		//add the author only for user messages
-		if (data.type === "user") {
+		if (data.type === 'user') {
 			//build the author object
-			var author = $("<span>", {
-				class: "author",
-				text: data.author.username + ":"
+			var author = $('<span>', {
+				class: 'author',
+				text: data.author.username + ':'
 			});
 
 			message.append(author);
 		}
 
 		//build the content object
-		var content = $("<span>", {
-			class: "content",
+		var content = $('<span>', {
+			class: 'content',
 			text: data.message
 		});
 
 		message.append(content);
 
 		//append the entire message element to the DOM
-		$("#chat .chat-body").append(message);
+		$('#chat .chat-body').append(message);
 
 		//play the chat message notification sound
-		notifications.play("message");
+		notifications.play('message');
 
 		//scroll to the bottom of the chat-body (in case there is a scroll)
-		var height = $("#chat .chat-body")[0].scrollHeight;
-		$("#chat .chat-body").scrollTop(height);
+		var height = $('#chat .chat-body')[0].scrollHeight;
+		$('#chat .chat-body').scrollTop(height);
 
 	});
 	
 	//game over handler
-	socket.on("gameOver", function (winner) {
+	socket.on('gameOver', function (winner) {
 		
 		//set the correct class in order to show the lose, win or tie message
 		var textClass;
 		
-		if(winner === null){
-			textClass = "tie";
-		}else if(winner === myUser.id){
-			textClass = "win";
+		if(winner === null) {
+			textClass = 'tie';
+		}else if(winner === myUser.id) {
+			textClass = 'win';
 		}else{
-			textClass = "lose";
+			textClass = 'lose';
 		}
 		
-		$("#game-over-modal .game-over-text").addClass(textClass);
+		$('#game-over-modal .game-over-text').addClass(textClass);
 		
 		//start set the countdown
 		var countdown = gameOverRedirectDelay;
-		$("#game-over-modal .counter").html(countdown);
+		$('#game-over-modal .counter').html(countdown);
 		
-		setInterval(function (){
+		setInterval(function () {
 			countdown--;
-			$("#game-over-modal .counter").html(countdown);
+			$('#game-over-modal .counter').html(countdown);
 			
 			//when the countdown is over redirect to the lobby
-			if(countdown === 0){
-				window.location = "/lobby";
+			if(countdown === 0) {
+				window.location = '/lobby';
 			}
 			
 		}, 1000);
 		
 		//show the modal
-		$("#game-over-modal").modal("show");
+		$('#game-over-modal').modal('show');
 		
 	});
 
 	//update game handler
-	socket.on("updateGame", function (game) {
+	socket.on('updateGame', function (game) {
 		
 		//clear any counters/countdowns
 		clearInterval(playerTurnCounterInterval);
 
-		$("#game-map").empty();
+		$('#game-map').empty();
 
 		//generate the game map
 		game.gameMap.forEach(function (row, rowIndex) {
-			var tr = $("<tr>");
+			var tr = $('<tr>');
 
 			row.forEach(function (value, colIndex) {
-				var td = $("<td>", {
-					class: rowIndex + "-" + colIndex,
+				var td = $('<td>', {
+					class: rowIndex + '-' + colIndex,
 					click: makeMove
 				});
 
@@ -150,16 +153,16 @@ function GameController(globals) {
 				tr.append(td);
 			});
 
-			$("#game-map").append(tr);
+			$('#game-map').append(tr);
 		});
 
 
-		$(".player-wrapper > .player").empty();
-		$(".player-wrapper > .player").removeClass("tada");
-		$(".player-wrapper > .counter").remove();
+		$('.player-wrapper > .player').empty();
+		$('.player-wrapper > .player').removeClass('tada');
+		$('.player-wrapper > .counter').remove();
 
 		//generate the players elements
-		$(".player-wrapper > .player").each(function (index) {
+		$('.player-wrapper > .player').each(function (index) {
 			var playerData;
 
 			//in the first player wrapper always put the current user
@@ -168,7 +171,7 @@ function GameController(globals) {
 
 				//if it's his turn - show the "tada" animation
 				if (game.playerTurn === myUser.id) {
-					$(this).addClass("tada");
+					$(this).addClass('tada');
 				}
 			} else {
 				playerData = _.find(game.players, function (player) {
@@ -183,7 +186,7 @@ function GameController(globals) {
 			generatePlayerData($(this), playerData, addCounter);
 			
 			//start the player turn countdown
-			if(addCounter){
+			if(addCounter) {
 				startTurnCountdown();
 			}
 			
@@ -200,16 +203,16 @@ function GameController(globals) {
 		var icon;
 
 		if (value === myUser.id) {
-			icon = "icon-x.png";
+			icon = 'icon-x.png';
 		} else if (value === 0) {
-			icon = "icon-transparent.png";
+			icon = 'icon-transparent.png';
 		} else {
-			icon = "icon-o.png";
+			icon = 'icon-o.png';
 		}
 
-		return $("<img>", {
-			class: "img-responsive",
-			src: "/img/" + icon
+		return $('<img>', {
+			class: 'img-responsive',
+			src: '/img/' + icon
 		});
 	}
 
@@ -220,26 +223,26 @@ function GameController(globals) {
 	 * @param {Boolean} addCounter
 	 */
 	function generatePlayerData(wrapper, data, addCounter) {
-		var avatar = $("<img>", {
-			class: "avatar img-responsive img-circle",
-			src: "/upload/avatars/" + data.avatar
+		var avatar = $('<img>', {
+			class: 'avatar img-responsive img-circle',
+			src: '/upload/avatars/' + data.avatar
 		});
 
-		var profileLink = $("<a>", {
-			class: "user-profile-modal-link",
-			"data-id": data.id,
-			href: "#",
-			title: "View user info"
+		var profileLink = $('<a>', {
+			class: 'user-profile-modal-link',
+			'data-id': data.id,
+			href: '#',
+			title: 'View user info'
 		});
 
-		var username = $("<div>", {
-			class: "username",
+		var username = $('<div>', {
+			class: 'username',
 			text: data.username
 		});
 		
 		if (addCounter) {
-			var counter = $("<div>", {
-				class: "counter",
+			var counter = $('<div>', {
+				class: 'counter',
 				text: playerTurnTimeout
 			});
 
@@ -264,10 +267,10 @@ function GameController(globals) {
 			if (counter === 0) {
 				clearInterval(playerTurnCounterInterval);
 				//terminate the game and mark it as lost by the player
-				socket.emit("playerTurnTimeout");
+				socket.emit('playerTurnTimeout');
 			}
 
-			$(".player-wrapper > .counter").html(counter);
+			$('.player-wrapper > .counter').html(counter);
 		}, 1000);
 	}
 
@@ -275,8 +278,8 @@ function GameController(globals) {
 	 * Sends the makeMove event passing the coordinates of the selected cell
 	 */
 	function makeMove() {
-		var cell = $(this).attr("class");
-		socket.emit("makeMove", cell);
+		var cell = $(this).attr('class');
+		socket.emit('makeMove', cell);
 	}
 
 }

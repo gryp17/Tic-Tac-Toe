@@ -1,46 +1,48 @@
-function UserProfileModalController(globals) {
+import moment from 'moment';
+
+export default function UserProfileModalController(globals) {
 	var myUser = globals.myUser;
 	var modal;
 		
 	//list of tabs that will be displayed in the modal
 	var tabs = [
 		{
-			type: "public",
-			text: "Game History",
-			classes: ["tab-button"],
-			target: "game-history"
+			type: 'public',
+			text: 'Game History',
+			classes: ['tab-button'],
+			target: 'game-history'
 		},
 		{
-			type: "private",
-			text: "Profile Settings",
-			classes: ["tab-button"],
-			target: "profile-settings"
+			type: 'private',
+			text: 'Profile Settings',
+			classes: ['tab-button'],
+			target: 'profile-settings'
 		}
 	];
 	
 	//load the component template and append it to the body
 	$.ajax({
-		url: "/template/user-profile-modal",
-		type: "GET"
+		url: '/template/user-profile-modal',
+		type: 'GET'
 	}).done(function (template) {
-		$("body").append(template);
+		$('body').append(template);
 		
-		modal = $("#user-profile-modal");
+		modal = $('#user-profile-modal');
 		
 		//change password click handler
-		modal.on("click", "#profile-settings-form button", function (){
+		modal.on('click', '#profile-settings-form button', function () {
 			changePassword();
 		});
 
 		//password input enter handler
-		modal.on("keypress", "#profile-settings-form input[type=password]", function (e){
+		modal.on('keypress', '#profile-settings-form input[type=password]', function (e) {
 			if (e.which === 13) {
 				changePassword();
 			}
 		});
 		
 		//profile link click handler
-		$("body").on("click", ".user-profile-modal-link", showUserProfileModal);
+		$('body').on('click', '.user-profile-modal-link', showUserProfileModal);
 	});
 	
 	/**
@@ -50,12 +52,12 @@ function UserProfileModalController(globals) {
 	function showUserProfileModal(e) {
 		e.preventDefault();
 
-		var userId = parseInt($(this).attr("data-id"));
+		var userId = parseInt($(this).attr('data-id'));
 
 		//get the user info
 		$.ajax({
-			url: "/user/" + userId,
-			type: "GET"
+			url: '/user/' + userId,
+			type: 'GET'
 		}).done(function (result) {
 			if (!result.userData) {
 				toastr.error(result);
@@ -71,28 +73,28 @@ function UserProfileModalController(globals) {
 			//clear the password fields
 			clearProfileSettings();
 
-			modal.modal("show");
+			modal.modal('show');
 		});
 	}
 	
 	/**
 	 * Resets all the password inputs in the profile settings
 	 */
-	function clearProfileSettings(){
-		modal.find("#profile-settings-form input[type=password]").val("");
+	function clearProfileSettings() {
+		modal.find('#profile-settings-form input[type=password]').val('');
 	}
 		
 	/**
 	 * Changes the current user password
 	 */
-	function changePassword(){
+	function changePassword() {
 		$.ajax({
-			url: "/user/changePassword",
-			type: "POST",
-			data: $("#profile-settings-form").serialize()
+			url: '/user/changePassword',
+			type: 'POST',
+			data: $('#profile-settings-form').serialize()
 		}).done(function (result) {
 			if (result.user) {
-				modal.modal("hide");
+				modal.modal('hide');
 			} else {
 				toastr.error(result);
 			}
@@ -103,38 +105,38 @@ function UserProfileModalController(globals) {
 	 * Generates the tabs buttons depending on the opened user id
 	 * @param {Number} userId
 	 */
-	function generateTabsButtons(userId){
-		var tabsWrapper = modal.find(".tabs-wrapper");
+	function generateTabsButtons(userId) {
+		var tabsWrapper = modal.find('.tabs-wrapper');
 		var visibleTabs = [];
 		
 		//remove the active class from all tab contents
-		modal.find(".tab-content").removeClass("active");
+		modal.find('.tab-content').removeClass('active');
 		
 		//show only the public tabs for the rest of the users
-		if(userId !== myUser.id){
-			visibleTabs = _.filter(tabs, {type: "public"});
+		if(userId !== myUser.id) {
+			visibleTabs = _.filter(tabs, {type: 'public'});
 		}else{
 			visibleTabs = tabs;
 		}
 		
 		tabsWrapper.empty();
-		visibleTabs.forEach(function (data, index){
+		visibleTabs.forEach(function (data, index) {
 			//clone the object before modifying it
 			data = _.cloneDeep(data);
 
 			//add the correct bootstrap column size
-			data.classes.push("col-xs-"+(12 / visibleTabs.length));
+			data.classes.push('col-xs-'+(12 / visibleTabs.length));
 
 			//add the "active" class to the first tab and to the first tab content
-			if(index === 0){
-				data.classes.push("active");
-				modal.find(".tab-content").first().addClass("active");
+			if(index === 0) {
+				data.classes.push('active');
+				modal.find('.tab-content').first().addClass('active');
 			}
 		    			
-			var tab = $("<div>", {
-				class: data.classes.join(" "),
+			var tab = $('<div>', {
+				class: data.classes.join(' '),
 				text: data.text,
-				"data-target": data.target
+				'data-target': data.target
 			});
 			
 			tabsWrapper.append(tab);
@@ -147,42 +149,42 @@ function UserProfileModalController(globals) {
 	 * @param {Array} gameHistory
 	 */
 	function generateGameHistory(userId, gameHistory) {
-		var gamesList = modal.find(".games-list");
+		var gamesList = modal.find('.games-list');
 		
 		gamesList.empty();
-		gameHistory.forEach(function (data){
+		gameHistory.forEach(function (data) {
 			var panelClass;
 			var panelTitle;
 			
 			//get the correct panel class and title depending on the game winner
-			if(!data.winner){
-				panelClass = "panel-info";
-				panelTitle = "Tie";
-			}else if(data.winner === userId){
-				panelClass = "panel-success";
-				panelTitle = "Win";
+			if(!data.winner) {
+				panelClass = 'panel-info';
+				panelTitle = 'Tie';
+			}else if(data.winner === userId) {
+				panelClass = 'panel-success';
+				panelTitle = 'Win';
 			}else {
-				panelClass = "panel-danger";
-				panelTitle = "Loss";
+				panelClass = 'panel-danger';
+				panelTitle = 'Loss';
 			}
 			
 			//add the "AFK" label if the entire map is empty
-			if(mapIsEmpty(data.map)){
-				panelTitle = panelTitle + " (AFK)";
+			if(mapIsEmpty(data.map)) {
+				panelTitle = panelTitle + ' (AFK)';
 			}
 			
-			var panel = $("<div>", {
-				class: "panel "+panelClass
+			var panel = $('<div>', {
+				class: 'panel '+panelClass
 			});
 			
-			var header = $("<div>", {
-				class: "panel-heading",
+			var header = $('<div>', {
+				class: 'panel-heading',
 				text: panelTitle
 			});
 			
-			var date = $("<span>", {
-				class: "date",
-				text: moment(data.finished).format("YYYY-MM-DD HH:mm:ss")
+			var date = $('<span>', {
+				class: 'date',
+				text: moment(data.finished).format('YYYY-MM-DD HH:mm:ss')
 			});
 			
 			//get the panel body
@@ -202,13 +204,13 @@ function UserProfileModalController(globals) {
 	 * @param {Array} map
 	 * @returns {Boolean}
 	 */
-	function mapIsEmpty(map){
+	function mapIsEmpty(map) {
 		var empty = true;
 		
 		outerLoop:
-		for(var i = 0; i < map.length; i++){
-			for(var j = 0; j < map[i].length; j++){
-				if(map[i][j] !== 0){
+		for(var i = 0; i < map.length; i++) {
+			for(var j = 0; j < map[i].length; j++) {
+				if(map[i][j] !== 0) {
 					empty = false;
 					break outerLoop;
 				}
@@ -225,38 +227,38 @@ function UserProfileModalController(globals) {
 	 * @returns {Object}
 	 */
 	function generatePanelBody(userId, data) {
-		var body = $("<div>", {
-			class: "panel-body"
+		var body = $('<div>', {
+			class: 'panel-body'
 		});
 		
-		var row = $("<div>", {
-			class: "row"
+		var row = $('<div>', {
+			class: 'row'
 		});
 		
 		//get the winner and loser objects
 		var currentUser = _.find(data.players, {id: userId});
-		var opponent = _.find(data.players, function (player){
+		var opponent = _.find(data.players, function (player) {
 			return player.id !== userId;
 		});
 		
 		//in first place always put the current user
-		[currentUser, opponent].forEach(function (playerData, index){
+		[currentUser, opponent].forEach(function (playerData, index) {
 			var playerClass;
 			
 			//apply different bootstrap classes to each player
-			if(index === 0){
-				playerClass = "col-xs-6 col-sm-3";
+			if(index === 0) {
+				playerClass = 'col-xs-6 col-sm-3';
 			}else{
-				playerClass = "col-xs-6 col-sm-push-6 col-sm-3";
+				playerClass = 'col-xs-6 col-sm-push-6 col-sm-3';
 			}
 			
-			var player = $("<div>", {
-				class: "player "+playerClass
+			var player = $('<div>', {
+				class: 'player '+playerClass
 			});
 			
-			var avatar = $("<img>", {
-				class: "avatar",
-				src: "/upload/avatars/"+playerData.avatar
+			var avatar = $('<img>', {
+				class: 'avatar',
+				src: '/upload/avatars/'+playerData.avatar
 			});
 			
 			player.append(avatar);
@@ -281,22 +283,22 @@ function UserProfileModalController(globals) {
 	 * @param {Object} data
 	 * @returns {Object}
 	 */
-	function generateGameResultMap(userId, data){
-		var wrapper = $("<div>", {
-			class: "col-xs-12 col-sm-pull-3 col-sm-6"
+	function generateGameResultMap(userId, data) {
+		var wrapper = $('<div>', {
+			class: 'col-xs-12 col-sm-pull-3 col-sm-6'
 		});
 		
-		var table = $("<table>", {
-			id: "game-result-map",
-			class: "table table-bordered"
+		var table = $('<table>', {
+			id: 'game-result-map',
+			class: 'table table-bordered'
 		});
 		
 		//generate the table rows
 		data.map.forEach(function (row, rowIndex) {
-			var tr = $("<tr>");
+			var tr = $('<tr>');
 
 			row.forEach(function (value, colIndex) {
-				var td = $("<td>");
+				var td = $('<td>');
 
 				//get the correct image
 				var img = mapCellValue(userId, value);
@@ -323,16 +325,16 @@ function UserProfileModalController(globals) {
 		var icon;
 
 		if (value === userId) {
-			icon = "icon-x.png";
+			icon = 'icon-x.png';
 		} else if (value === 0) {
-			icon = "icon-transparent.png";
+			icon = 'icon-transparent.png';
 		} else {
-			icon = "icon-o.png";
+			icon = 'icon-o.png';
 		}
 
-		return $("<img>", {
-			class: "img-responsive",
-			src: "/img/" + icon
+		return $('<img>', {
+			class: 'img-responsive',
+			src: '/img/' + icon
 		});
 	}
 	
@@ -359,13 +361,13 @@ function UserProfileModalController(globals) {
 		});
 		
 		//generate the html
-		var tbody = modal.find(".wtl tbody");
+		var tbody = modal.find('.wtl tbody');
 		tbody.empty();
 		
-		var tr = $("<tr>");
+		var tr = $('<tr>');
 		
-		Object.values(WTL).forEach(function (count){			
-			var td = $("<td>", {
+		Object.values(WTL).forEach(function (count) {			
+			var td = $('<td>', {
 				text: count 
 			});
 			tr.append(td);

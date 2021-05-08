@@ -1,13 +1,13 @@
-var _ = require("lodash");
-var async = require("async");
+var _ = require('lodash');
+var async = require('async');
 
-var middleware = require("../../middleware");
-var GameModel = require("../../models/game");
-var PlayerModel = require("../../models/player");
+var middleware = require('../../middleware');
+var GameModel = require('../../models/game');
+var PlayerModel = require('../../models/player');
 
 module.exports = function (io, app) {
 	//game namespace
-	var game = io.of("/game");
+	var game = io.of('/game');
 	
 	var disconnectTimeoutPeriod = 5; //seconds
 	var disconnectTimeouts = {};
@@ -15,17 +15,17 @@ module.exports = function (io, app) {
 	//checks if the socket.io requests are authorized
 	game.use(middleware.socketIsAuthorized);
 
-	game.on("connection", function (socket) {
+	game.on('connection', function (socket) {
 		
 		//clear any disconnect timeouts for this user
 		clearTimeout(disconnectTimeouts[socket.session.user.id]);
 		
 		//lobby namespace
-		var lobby = app.get("socketNamespaces").lobby;
+		var lobby = app.get('socketNamespaces').lobby;
 		
 		//find the game that this user belongs to
 		var myGame = game.getMyGame(lobby, socket);	
-		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;
+		var gameRoomId = myGame.players[0].id+'-'+myGame.players[1].id;
 		
 		//join a room that is reserved only for the players in this game
 		socket.join(gameRoomId);
@@ -34,28 +34,28 @@ module.exports = function (io, app) {
 		game.initGame(socket, myGame);
 		
 		//game chat message handler
-		socket.on("chatMessage", function (message) {
+		socket.on('chatMessage', function (message) {
 			//add the type, date and author attributes and emit the message to both players
 			var data = {
-				type: "user",
+				type: 'user',
 				message: message,
 				date: new Date(),
 				author: socket.session.user
 			};
 
-			game.to(gameRoomId).emit("chatMessage", data);
+			game.to(gameRoomId).emit('chatMessage', data);
 		});
 		
 		//make move handler
-		socket.on("makeMove", function (coordinates){
+		socket.on('makeMove', function (coordinates) {
 			var myGame = game.getMyGame(lobby, socket);
 			
-			coordinates = coordinates.split("-");
+			coordinates = coordinates.split('-');
 			var x = coordinates[0];
 			var y = coordinates[1];
 			
 			//check if the selected cell is empty and if it's the current player's turn
-			if(myGame.gameMap[x][y] === 0 && myGame.playerTurn === socket.session.user.id){
+			if(myGame.gameMap[x][y] === 0 && myGame.playerTurn === socket.session.user.id) {
 				//make the move
 				myGame.gameMap[x][y] = socket.session.user.id;
 				
@@ -71,7 +71,7 @@ module.exports = function (io, app) {
 		});
 		
 		//player turn timeout handler
-		socket.on("playerTurnTimeout", function (){
+		socket.on('playerTurnTimeout', function () {
 			//if the player hasn't made any moves (has timed out) mark the other player as winner
 			var winner = _.find(myGame.players, function (player) {
 				return player.id !== socket.session.user.id;
@@ -81,16 +81,16 @@ module.exports = function (io, app) {
 		});
 
 		//disconnect event handler
-		socket.on("disconnect", function () {
+		socket.on('disconnect', function () {
 			var myGame = game.getMyGame(lobby, socket);
 			
 			//don't do anything if the game has terminated already
-			if(!myGame){
+			if(!myGame) {
 				return;
 			}
 			
 			//schedule a timeout - if the player doesn't reconnect in X seconds the game is won by the other player
-			disconnectTimeouts[socket.session.user.id] = setTimeout(function (){
+			disconnectTimeouts[socket.session.user.id] = setTimeout(function () {
 				var winner = _.find(myGame.players, function (player) {
 					return player.id !== socket.session.user.id;
 				});
@@ -100,12 +100,12 @@ module.exports = function (io, app) {
 			
 			//create a system message and send it to notify both players that the user has left the game
 			var data = {
-				type: "system disconnected",
-				message: socket.session.user.username + " left the game",
+				type: 'system disconnected',
+				message: socket.session.user.username + ' left the game',
 				date: new Date()
 			};
 
-			game.to(gameRoomId).emit("chatMessage", data);			
+			game.to(gameRoomId).emit('chatMessage', data);			
 		});
 
 	});
@@ -116,8 +116,8 @@ module.exports = function (io, app) {
 	 * @param {Object} socket
 	 * @returns {Object}
 	 */
-	game.getMyGame = function (lobbyNamespace, socket){
-		return lobbyNamespace.findGameByUserId(socket.session.user.id, "active");
+	game.getMyGame = function (lobbyNamespace, socket) {
+		return lobbyNamespace.findGameByUserId(socket.session.user.id, 'active');
 	};
 	
 	/**
@@ -125,11 +125,11 @@ module.exports = function (io, app) {
 	 * @param {Object} socket
 	 * @param {Object} myGame
 	 */
-	game.initGame = function (socket, myGame){
-		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;
+	game.initGame = function (socket, myGame) {
+		var gameRoomId = myGame.players[0].id+'-'+myGame.players[1].id;
 		
 		//initialize an empty game map if the map is not set yet
-		if(!myGame.gameMap){
+		if(!myGame.gameMap) {
 			myGame.gameMap = [
 				[0, 0, 0],
 				[0, 0, 0],
@@ -138,22 +138,22 @@ module.exports = function (io, app) {
 		}
 		
 		//if the player turn is not set - the first player always has the first turn
-		if(!myGame.playerTurn){
+		if(!myGame.playerTurn) {
 			myGame.playerTurn = myGame.players[0].id;
 		}
 				
-		game.to(socket.id).emit("updateGame", myGame);
+		game.to(socket.id).emit('updateGame', myGame);
 		
 		//create a system message and send it to notify both players that the user has joined the lobby
 		var data = {
-			type: "system connected",
-			message: socket.session.user.username + " joined the game",
+			type: 'system connected',
+			message: socket.session.user.username + ' joined the game',
 			date: new Date()
 		};
 		
 		//send the message with some delay to make sure both players have joined the game
-		setTimeout(function (){
-			game.to(gameRoomId).emit("chatMessage", data);
+		setTimeout(function () {
+			game.to(gameRoomId).emit('chatMessage', data);
 		}, 1000);
 	};
 		
@@ -161,9 +161,9 @@ module.exports = function (io, app) {
 	 * Broadcasts the game object to all players in that game
 	 * @param {Object} myGame
 	 */
-	game.updateGame = function (myGame){
-		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;				
-		game.to(gameRoomId).emit("updateGame", myGame);
+	game.updateGame = function (myGame) {
+		var gameRoomId = myGame.players[0].id+'-'+myGame.players[1].id;				
+		game.to(gameRoomId).emit('updateGame', myGame);
 	};
 	
 	/**
@@ -171,11 +171,11 @@ module.exports = function (io, app) {
 	 * @param {Object} myGame
 	 * @returns {Object}
 	 */
-	game.switchPlayerTurn = function (myGame){
+	game.switchPlayerTurn = function (myGame) {
 		var currentPlayer = myGame.playerTurn;
 		
-		myGame.players.forEach(function (player){
-			if(currentPlayer !== player.id){
+		myGame.players.forEach(function (player) {
+			if(currentPlayer !== player.id) {
 				myGame.playerTurn = player.id;
 			}
 		});
@@ -224,7 +224,7 @@ module.exports = function (io, app) {
 		}
 
 		//if the game is over for whatever reason - notify the players and add the database records
-		if(gameOver){
+		if(gameOver) {
 			game.gameOver(lobby, winner, myGame);
 		}
 	};
@@ -296,16 +296,16 @@ module.exports = function (io, app) {
 	 * @param {Number} winner
 	 * @param {Object} myGame
 	 */
-	game.gameOver = function (lobby, winner, myGame){
-		var gameRoomId = myGame.players[0].id+"-"+myGame.players[1].id;	
+	game.gameOver = function (lobby, winner, myGame) {
+		var gameRoomId = myGame.players[0].id+'-'+myGame.players[1].id;	
 				
 		gameModel = new GameModel();
 		playerModel = new PlayerModel();
 		
 		//insert the "game" database record
-		gameModel.create(winner, myGame.gameMap, function (err, result){
-			if(err){
-				console.log("failed to insert the game record");
+		gameModel.create(winner, myGame.gameMap, function (err, result) {
+			if(err) {
+				console.log('failed to insert the game record');
 				console.log(err);
 				return;
 			}
@@ -314,15 +314,15 @@ module.exports = function (io, app) {
 			
 			//insert both "player" records
 			async.parallel([
-				function (done){
+				function (done) {
 					playerModel.create(myGame.players[0].id, gameId, done);
 				},
-				function (done){
+				function (done) {
 					playerModel.create(myGame.players[1].id, gameId, done);
 				}
-			], function (err){
-				if(err){
-					console.log("failed to insert the player records");
+			], function (err) {
+				if(err) {
+					console.log('failed to insert the player records');
 					console.log(err);
 					return;
 				}
@@ -331,7 +331,7 @@ module.exports = function (io, app) {
 				lobby.deleteGame(myGame);
 
 				//send the game over event to the players (it redirects them to the lobby)
-				game.to(gameRoomId).emit("gameOver", winner);
+				game.to(gameRoomId).emit('gameOver', winner);
 				
 			});
 		});

@@ -1,9 +1,9 @@
-var mysql = require("mysql");
-var app = require("../app");
-var _ = require("lodash");
+var mysql = require('mysql');
+var app = require('../app');
+var _ = require('lodash');
 
 module.exports = function () {	
-	var connection = mysql.createConnection(app.get("config").db);
+	var connection = mysql.createConnection(app.get('config').db);
 	
 	/**
 	 * Inserts new game record
@@ -11,8 +11,8 @@ module.exports = function () {
 	 * @param {Array} map
 	 * @param {Function} done
 	 */
-	this.create = function (winner, map, done){
-		connection.query("INSERT INTO game (winner, map, finished) VALUES (?, ?, now())", [winner, JSON.stringify(map)], done);
+	this.create = function (winner, map, done) {
+		connection.query('INSERT INTO game (winner, map, finished) VALUES (?, ?, now())', [winner, JSON.stringify(map)], done);
 	};
 	
 	/**
@@ -20,26 +20,26 @@ module.exports = function () {
 	 * @param {Number} userId
 	 * @param {Function} done
 	 */
-	this.getGameHistory = function (userId, done){
+	this.getGameHistory = function (userId, done) {
 		
 		//get the games that the user has participated in, but also return all the user data for both players
-		var query = "SELECT gameId, winner, map, finished, userId, user.username AS username, user.avatar AS avatar "
-					+"FROM player, game, user " 
-					+"WHERE game.id = player.gameId "
-					+"AND player.userId = user.id "
-					+"AND gameId IN (select gameId from player where player.userId = ?) "
-					+"ORDER BY finished DESC";
+		var query = 'SELECT gameId, winner, map, finished, userId, user.username AS username, user.avatar AS avatar '
+					+'FROM player, game, user ' 
+					+'WHERE game.id = player.gameId '
+					+'AND player.userId = user.id '
+					+'AND gameId IN (select gameId from player where player.userId = ?) '
+					+'ORDER BY finished DESC';
 		
-		connection.query(query, [userId], function (err, records){
-			if(err){
+		connection.query(query, [userId], function (err, records) {
+			if(err) {
 				return done(err);
 			}
 			
 			var historyMap = {};
 			
 			//loop thru all the results and merge them (there are 2 results per game - one for each player)
-			records.forEach(function (record){
-				if(!historyMap[record.gameId]){
+			records.forEach(function (record) {
+				if(!historyMap[record.gameId]) {
 					//parse the game map
 					record.map = JSON.parse(record.map);
 					
@@ -48,8 +48,8 @@ module.exports = function () {
 				}
 				
 				//if there is no avatar set - use the default one
-				if(!record.avatar){
-					record.avatar = app.get("config").uploads.defaultAvatar;
+				if(!record.avatar) {
+					record.avatar = app.get('config').uploads.defaultAvatar;
 				}
 				
 				//fill the "players" array
@@ -67,7 +67,7 @@ module.exports = function () {
 			});
 						
 			//convert the object into array and return it (also order by date because we have lost the order in the historyMap object...)
-			done(null, _.orderBy(_.values(historyMap), ["finished"], ["desc"]));
+			done(null, _.orderBy(_.values(historyMap), ['finished'], ['desc']));
 		});
 	};	
 };

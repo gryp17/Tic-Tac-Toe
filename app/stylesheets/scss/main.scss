@@ -1,10 +1,13 @@
-@import "_bootstrap";
+// @import "_bootstrap";
+@import url("bootstrap/dist/css/bootstrap");
+@import "toastr";
+
 @import "utils/_colors";
 @import "utils/_common";
 @import "utils/_animations";
 
 body{
-	background: url("/img/pattern.png");
+	background: url("/app/img/pattern.png");
 	
 	@import "components/_tabs";
 	@import "components/_user-profile-modal";

@@ -1,7 +1,7 @@
 # Tic-Tac-Toe
 NodeJS/Socket.IO implementation of the Tic-Tac-Toe game.
 The backend is based on Express and MySQL while the front end uses mostly jQuery with some changes to the way it handles reusable components.
-It uses [SASS](http://sass-lang.com) as css preprocessor, the dependencies are managed using [bower](https://bower.io) and the build process is done with [gulp](http://gulpjs.com).
+It uses [SASS](http://sass-lang.com) as css preprocessor, the dependencies are managed using [npm](https://www.npmjs.com/) and the build process is done with [webpack](https://webpack.js.org/).
 
 Some of the game's features include:
 - User signup.
@@ -18,16 +18,10 @@ Some of the game's features include:
   npm install
   ```
 
-2. Install all bower dependencies:
-
-  ```
-  bower install
-  ```
-
 3. Build the javascript and css files:
 
   ```
-  gulp build
+  npm run build
   ```
 
 4. Import the database schema
