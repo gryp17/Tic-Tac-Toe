@@ -5,7 +5,8 @@
 	"scripts": {
 		"build": "webpack --mode production",
 		"build-dev": "webpack --mode development --watch",
-		"start": "nodemon server/app.js",
+		"start": "cross-env NODE_ENV=production node server/app.js",
+		"start-dev": "cross-env NODE_ENV=development nodemon server/app.js",
 		"lint": "eslint \"**/*.js\" --ignore-pattern node_modules/",
 		"lint-fix": "eslint \"**/*.js\" --ignore-pattern node_modules/ --fix"
 	},
@@ -14,6 +15,7 @@
 		"babel-eslint": "^10.1.0",
 		"babel-loader": "^8.2.2",
 		"copy-webpack-plugin": "^8.1.1",
+		"cross-env": "^7.0.3",
 		"css-loader": "^5.2.4",
 		"eslint": "^6.7.2",
 		"file-loader": "^6.2.0",

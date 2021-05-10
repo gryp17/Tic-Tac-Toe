@@ -18,21 +18,29 @@ Some of the game's features include:
   npm install
   ```
 
-3. Build the javascript and css files:
+3. Build the javascript and css files in production or development mode:
 
   ```
   npm run build
   ```
 
-4. Import the database schema
+  ```
+  npm run build-dev
+  ```
+
+4. Import the database schema:
   
   > [/db-schema.sql](https://github.com/gryp17/Tic-Tac-Toe/blob/master/db-schema.sql)
 
 
-5. Start the web server
+5. Start the web server in production or development mode:
 
   ```
-  npm start
+  npm run start
+  ```
+
+  ```
+  npm run start-dev
   ```
 
 ## Configuration
