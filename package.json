@@ -30,7 +30,7 @@
 		"webpack-cli": "^4.6.0"
 	},
 	"dependencies": {
-		"async": "^2.3.0",
+		"async": "^3.2.2",
 		"body-parser": "~1.17.1",
 		"bootstrap": "^3.4.1",
 		"connect-multiparty": "^2.0.0",
