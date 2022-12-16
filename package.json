@@ -38,7 +38,7 @@
 		"cookie-parser": "~1.4.3",
 		"debug": "~2.6.3",
 		"ejs": "~2.5.6",
-		"express": "~4.15.2",
+		"express": "~4.17.3",
 		"express-mysql-session": "^1.2.0",
 		"express-session": "^1.15.2",
 		"jquery": "~2.1.4",
